@@ -70,3 +70,9 @@
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
+
+.pauseStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48;
+    -fx-background-color: orange;
+}
