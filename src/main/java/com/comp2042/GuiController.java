@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -94,11 +93,6 @@ public class GuiController implements Initializable {
         pausePanel = new PausePanel();
         pausePanel.setVisible(false);
         groupNotification.getChildren().add(pausePanel);
-
-        final Reflection reflection = new Reflection();
-        reflection.setFraction(0.8);
-        reflection.setTopOpacity(0.9);
-        reflection.setTopOffset(-12);
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
