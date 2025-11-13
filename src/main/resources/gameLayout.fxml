@@ -26,6 +26,11 @@
         <Text fx:id="scoreText" text="0" styleClass="scoreClass"/>
     </VBox>
 
+    <VBox layoutX="240" layoutY="150" spacing="5" alignment="TOP_CENTER">
+        <Label text="NEXT" styleClass="nextBrickLabel"/>
+        <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1"/>
+    </VBox>
+
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>

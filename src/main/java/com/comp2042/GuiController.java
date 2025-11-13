@@ -42,9 +42,14 @@ public class GuiController implements Initializable {
     @FXML
     private Text scoreText;
 
+    @FXML
+    private GridPane nextBrickPanel;
+
     private PausePanel pausePanel;
 
     private Rectangle[][] displayMatrix;
+
+    private Rectangle[][] nextBrickRectangles;
 
     private InputEventListener eventListener;
 
@@ -122,6 +127,8 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
+        // Initialize next brick preview panel
+        initNextBrickPanel(brick.getNextBrickData());
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -129,6 +136,75 @@ public class GuiController implements Initializable {
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+    }
+
+    private void initNextBrickPanel(int[][] nextBrickData) {
+        // Create a 4x4 grid for the next brick preview
+        nextBrickRectangles = new Rectangle[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+                nextBrickRectangles[i][j] = rectangle;
+                nextBrickPanel.add(rectangle, j, i);
+            }
+        }
+        updateNextBrickPanel(nextBrickData);
+    }
+
+    private void updateNextBrickPanel(int[][] nextBrickData) {
+        // Clear the preview panel
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                nextBrickRectangles[i][j].setFill(Color.TRANSPARENT);
+                nextBrickRectangles[i][j].setArcHeight(0);
+                nextBrickRectangles[i][j].setArcWidth(0);
+            }
+        }
+
+        // Display the next brick centered in the 4x4 grid
+        if (nextBrickData != null && nextBrickData.length > 0) {
+            // Find the actual bounds of the brick (non-zero cells)
+            int minRow = nextBrickData.length, maxRow = -1;
+            int minCol = nextBrickData[0].length, maxCol = -1;
+
+            for (int i = 0; i < nextBrickData.length; i++) {
+                for (int j = 0; j < nextBrickData[i].length; j++) {
+                    if (nextBrickData[i][j] != 0) {
+                        minRow = Math.min(minRow, i);
+                        maxRow = Math.max(maxRow, i);
+                        minCol = Math.min(minCol, j);
+                        maxCol = Math.max(maxCol, j);
+                    }
+                }
+            }
+
+            // Calculate actual brick dimensions
+            if (maxRow >= 0) {
+                int brickHeight = maxRow - minRow + 1;
+                int brickWidth = maxCol - minCol + 1;
+
+                // Center the brick in the 4x4 grid
+                int offsetRow = (4 - brickHeight) / 2;
+                int offsetCol = (4 - brickWidth) / 2;
+
+                for (int i = 0; i < nextBrickData.length; i++) {
+                    for (int j = 0; j < nextBrickData[i].length; j++) {
+                        if (nextBrickData[i][j] != 0) {
+                            int targetRow = offsetRow + (i - minRow);
+                            int targetCol = offsetCol + (j - minCol);
+
+                            if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
+                                Rectangle rect = nextBrickRectangles[targetRow][targetCol];
+                                rect.setFill(getFillColor(nextBrickData[i][j]));
+                                rect.setArcHeight(9);
+                                rect.setArcWidth(9);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private Paint getFillColor(int i) {
@@ -175,6 +251,8 @@ public class GuiController implements Initializable {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
+            // Update next brick preview
+            updateNextBrickPanel(brick.getNextBrickData());
         }
     }
 
