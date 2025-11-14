@@ -51,6 +51,10 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] nextBrickRectangles;
 
+    private GridPane ghostBrickPanel;
+
+    private Rectangle[][] ghostRectangles;
+
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
@@ -126,6 +130,22 @@ public class GuiController implements Initializable {
         }
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+
+        // Initialize ghost brick panel
+        ghostBrickPanel = new GridPane();
+        ghostBrickPanel.setHgap(1);
+        ghostBrickPanel.setVgap(1);
+        groupNotification.getChildren().add(0, ghostBrickPanel); // Add at index 0 so it's behind other elements
+
+        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+                ghostRectangles[i][j] = rectangle;
+                ghostBrickPanel.add(rectangle, j, i);
+            }
+        }
 
         // Initialize next brick preview panel
         initNextBrickPanel(brick.getNextBrickData());
@@ -251,8 +271,38 @@ public class GuiController implements Initializable {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
+            // Update ghost brick
+            updateGhostBrick(brick);
             // Update next brick preview
             updateNextBrickPanel(brick.getNextBrickData());
+        }
+    }
+
+    private void updateGhostBrick(ViewData brick) {
+        // Position ghost brick at the landing position
+        ghostBrickPanel.setLayoutX(-15 + gamePanel.getLayoutX() + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        ghostBrickPanel.setLayoutY(-242 + gamePanel.getLayoutY() + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
+
+        // Update ghost brick appearance - semi-transparent version of the brick
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                if (brick.getBrickData()[i][j] != 0) {
+                    Paint color = getFillColor(brick.getBrickData()[i][j]);
+                    // Make it semi-transparent
+                    if (color instanceof Color) {
+                        Color solidColor = (Color) color;
+                        Color ghostColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.3);
+                        ghostRectangles[i][j].setFill(ghostColor);
+                        ghostRectangles[i][j].setStroke(solidColor.deriveColor(0, 1, 1, 0.5));
+                        ghostRectangles[i][j].setStrokeWidth(1);
+                    } else {
+                        ghostRectangles[i][j].setFill(Color.TRANSPARENT);
+                    }
+                } else {
+                    ghostRectangles[i][j].setFill(Color.TRANSPARENT);
+                    ghostRectangles[i][j].setStroke(null);
+                }
+            }
         }
     }
 
