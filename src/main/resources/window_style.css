@@ -64,6 +64,13 @@
     -fx-background-color: red;
 }
 
+.startMenuStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
 .scoreClass{
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 38;
@@ -75,4 +82,8 @@
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;
     -fx-background-color: orange;
+}
+
+.pauseOverlay {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
 }
