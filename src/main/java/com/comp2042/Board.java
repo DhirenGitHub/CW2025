@@ -25,4 +25,6 @@ public interface Board {
     void newGame();
 
     int getGhostYPosition();
+
+    void hardDrop();
 }

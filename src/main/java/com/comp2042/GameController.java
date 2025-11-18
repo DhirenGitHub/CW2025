@@ -60,6 +60,21 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    @Override
+    public void onHardDropEvent() {
+        // Perform hard drop
+        board.hardDrop();
+        // Immediately trigger the merge and check for game over
+        board.mergeBrickToBackground();
+        ClearRow clearRow = board.clearRows();
+        if (clearRow.getLinesRemoved() > 0) {
+            board.getScore().add(clearRow.getScoreBonus());
+        }
+        if (board.createNewBrick()) {
+            viewGuiController.gameOver();
+        }
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+    }
 
     @Override
     public void createNewGame() {

@@ -146,4 +146,12 @@ public class SimpleBoard implements Board {
 
         return (int) ghostPosition.getY();
     }
+
+    @Override
+    public void hardDrop() {
+        // Move brick to ghost position instantly
+        currentOffset.y = getGhostYPosition();
+        // Award +30 points for hard drop
+        score.add(30);
+    }
 }

@@ -108,6 +108,10 @@ public class GuiController implements Initializable {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     }
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        hardDrop();
+                        keyEvent.consume();
+                    }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
@@ -364,6 +368,13 @@ public class GuiController implements Initializable {
             refreshBrick(downData.getViewData());
         }
         gamePanel.requestFocus();
+    }
+
+    private void hardDrop() {
+        if (isPause.getValue() == Boolean.FALSE) {
+            eventListener.onHardDropEvent();
+            gamePanel.requestFocus();
+        }
     }
 
     public void setEventListener(InputEventListener eventListener) {
