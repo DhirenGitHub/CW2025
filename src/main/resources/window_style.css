@@ -63,8 +63,10 @@
 }
 
 .bonusStyle {
-    -fx-font-size: 40px;
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48px;
     -fx-font-weight: bold;
+    -fx-text-fill: white;
 }
 
 .gameOverStyle {

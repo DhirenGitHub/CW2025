@@ -15,7 +15,7 @@
         </center>
     </BorderPane>
 
-    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+    <Group fx:id="groupNotification" layoutX="0" layoutY="0">
     </Group>
 
     <VBox fx:id="sidebarContainer" layoutX="240" layoutY="30" spacing="15" alignment="TOP_CENTER" prefWidth="100">

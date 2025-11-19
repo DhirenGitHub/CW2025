@@ -61,7 +61,7 @@ public class GameController implements InputEventListener {
     }
 
     @Override
-    public void onHardDropEvent() {
+    public DownData onHardDropEvent() {
         // Perform hard drop
         board.hardDrop();
         // Immediately trigger the merge and check for game over
@@ -74,6 +74,7 @@ public class GameController implements InputEventListener {
             viewGuiController.gameOver();
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        return new DownData(clearRow, board.getViewData());
     }
 
     @Override

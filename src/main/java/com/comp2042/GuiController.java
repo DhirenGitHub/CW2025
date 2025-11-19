@@ -387,9 +387,7 @@ public class GuiController implements Initializable {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(notificationPanel);
-                notificationPanel.showScore(groupNotification.getChildren());
+                showScoreNotification(downData.getClearRow().getScoreBonus());
             }
             refreshBrick(downData.getViewData());
         }
@@ -398,9 +396,33 @@ public class GuiController implements Initializable {
 
     private void hardDrop() {
         if (isPause.getValue() == Boolean.FALSE) {
-            eventListener.onHardDropEvent();
+            DownData downData = eventListener.onHardDropEvent();
+            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                showScoreNotification(downData.getClearRow().getScoreBonus());
+            }
+            refreshBrick(downData.getViewData());
             gamePanel.requestFocus();
         }
+    }
+
+    private void showScoreNotification(int scoreBonus) {
+        NotificationPanel notificationPanel = new NotificationPanel("+" + scoreBonus);
+
+        // Center the notification on the game board
+        double boardWidth = gameBoard.getWidth();
+        double boardHeight = gameBoard.getHeight();
+        double notificationWidth = 230; // NotificationPanel preferred width
+        double notificationHeight = 100; // NotificationPanel preferred height
+
+        // Calculate center position
+        double centerX = (boardWidth - notificationWidth) / 2;
+        double centerY = (boardHeight - notificationHeight) / 2;
+
+        notificationPanel.setLayoutX(centerX);
+        notificationPanel.setLayoutY(centerY);
+
+        groupNotification.getChildren().add(notificationPanel);
+        notificationPanel.showScore(groupNotification.getChildren());
     }
 
     public void setEventListener(InputEventListener eventListener) {
