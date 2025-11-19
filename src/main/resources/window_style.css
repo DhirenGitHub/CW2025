@@ -78,6 +78,13 @@
     -fx-text-fill: yellow;
 }
 
+.highScoreClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
+    -fx-fill: cyan;
+    -fx-text-fill: cyan;
+}
+
 .pauseStyle {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;

@@ -52,12 +52,20 @@ public class GuiController implements Initializable {
     private javafx.scene.layout.VBox nextBrickContainer;
 
     @FXML
+    private javafx.scene.layout.VBox highScoreContainer;
+
+    @FXML
+    private Text highScoreText;
+
+    @FXML
     private javafx.scene.layout.BorderPane gameBoard;
 
     @FXML
     private javafx.scene.layout.Pane rootPane;
 
     private PausePanel pausePanel;
+
+    private HighScoreManager highScoreManager;
 
     private StartMenuPanel startMenuPanel;
 
@@ -90,6 +98,16 @@ public class GuiController implements Initializable {
         Font digitalFont = FontLoader.getFont(38);
         if (digitalFont != null && scoreText != null) {
             scoreText.setFont(digitalFont);
+        }
+
+        // Initialize high score manager and display
+        highScoreManager = new HighScoreManager();
+        if (highScoreText != null) {
+            Font highScoreFont = FontLoader.getFont(28);
+            if (highScoreFont != null) {
+                highScoreText.setFont(highScoreFont);
+            }
+            highScoreText.setText(String.valueOf(highScoreManager.getHighScore()));
         }
 
         gamePanel.setFocusTraversable(true);
@@ -393,6 +411,22 @@ public class GuiController implements Initializable {
 
     public void bindScore(IntegerProperty integerProperty) {
         scoreText.textProperty().bind(integerProperty.asString());
+        // Listen for score changes to check for new high score
+        integerProperty.addListener((obs, oldVal, newVal) -> {
+            checkAndUpdateHighScore(newVal.intValue());
+        });
+    }
+
+    /**
+     * Checks if the current score beats the high score and updates display
+     */
+    public void checkAndUpdateHighScore(int currentScore) {
+        if (highScoreManager != null && highScoreManager.checkAndUpdateHighScore(currentScore)) {
+            // New high score achieved!
+            if (highScoreText != null) {
+                highScoreText.setText(String.valueOf(highScoreManager.getHighScore()));
+            }
+        }
     }
 
     public void gameOver() {
@@ -466,6 +500,9 @@ public class GuiController implements Initializable {
         if (gameBoard != null) {
             gameBoard.setVisible(false);
         }
+        if (highScoreContainer != null) {
+            highScoreContainer.setVisible(false);
+        }
         if (timeLine != null) {
             timeLine.stop();
         }
@@ -500,6 +537,9 @@ public class GuiController implements Initializable {
         }
         if (gameBoard != null) {
             gameBoard.setVisible(true);
+        }
+        if (highScoreContainer != null) {
+            highScoreContainer.setVisible(true);
         }
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
