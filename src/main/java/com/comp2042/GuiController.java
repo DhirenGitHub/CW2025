@@ -196,13 +196,15 @@ public class GuiController implements Initializable {
         ghostBrickPanel = new GridPane();
         ghostBrickPanel.setHgap(1);
         ghostBrickPanel.setVgap(1);
-        groupNotification.getChildren().add(0, ghostBrickPanel); // Add at index 0 so it's behind other elements
+        rootPane.getChildren().add(0, ghostBrickPanel); // Add at index 0 so it's behind other elements
 
         ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
+                rectangle.setArcHeight(9);
+                rectangle.setArcWidth(9);
                 ghostRectangles[i][j] = rectangle;
                 ghostBrickPanel.add(rectangle, j, i);
             }
@@ -340,9 +342,9 @@ public class GuiController implements Initializable {
     }
 
     private void updateGhostBrick(ViewData brick) {
-        // Position ghost brick at the landing position
-        ghostBrickPanel.setLayoutX(-90 + gamePanel.getLayoutX() + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-162 + gamePanel.getLayoutY() + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
+        // Position ghost brick at the landing position (same X as brickPanel, Y at ghost position)
+        ghostBrickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        ghostBrickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
 
         // Update ghost brick appearance - semi-transparent version of the brick
         for (int i = 0; i < brick.getBrickData().length; i++) {
