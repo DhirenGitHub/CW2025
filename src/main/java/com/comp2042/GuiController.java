@@ -46,13 +46,7 @@ public class GuiController implements Initializable {
     private GridPane nextBrickPanel;
 
     @FXML
-    private javafx.scene.layout.VBox scoreContainer;
-
-    @FXML
-    private javafx.scene.layout.VBox nextBrickContainer;
-
-    @FXML
-    private javafx.scene.layout.VBox highScoreContainer;
+    private javafx.scene.layout.VBox sidebarContainer;
 
     @FXML
     private Text highScoreText;
@@ -148,6 +142,10 @@ public class GuiController implements Initializable {
         });
         gameOverPanel.setVisible(false);
 
+        // Wire up game over panel buttons
+        gameOverPanel.getNewGameButton().setOnAction(e -> newGame(null));
+        gameOverPanel.getHomeButton().setOnAction(e -> returnToHome());
+
         // Initialize pause panel with full-screen overlay
         pausePanel = new PausePanel();
         pausePanel.setVisible(false);
@@ -160,9 +158,11 @@ public class GuiController implements Initializable {
         pausePanel.getNewGameButton().setOnAction(e -> newGame(null));
         pausePanel.getHomeButton().setOnAction(e -> returnToHome());
 
-        // Initialize start menu
+        // Initialize start menu with full-screen centering
         startMenuPanel = new StartMenuPanel();
-        groupNotification.getChildren().add(startMenuPanel);
+        startMenuPanel.setLayoutX(0);
+        startMenuPanel.setLayoutY(0);
+        rootPane.getChildren().add(startMenuPanel);
         startMenuPanel.getPlayButton().setOnAction(e -> startGame());
 
         // Show start menu initially
@@ -491,17 +491,11 @@ public class GuiController implements Initializable {
         if (ghostBrickPanel != null) {
             ghostBrickPanel.setVisible(false);
         }
-        if (scoreContainer != null) {
-            scoreContainer.setVisible(false);
-        }
-        if (nextBrickContainer != null) {
-            nextBrickContainer.setVisible(false);
+        if (sidebarContainer != null) {
+            sidebarContainer.setVisible(false);
         }
         if (gameBoard != null) {
             gameBoard.setVisible(false);
-        }
-        if (highScoreContainer != null) {
-            highScoreContainer.setVisible(false);
         }
         if (timeLine != null) {
             timeLine.stop();
@@ -510,11 +504,16 @@ public class GuiController implements Initializable {
 
     private void startGame() {
         if (!gameInitialized) {
-            // First time starting the game - initialize everything
+            // First time - initialize the game (sets up displayMatrix, etc.)
             if (gameController != null) {
                 gameController.initializeGame();
             }
             gameInitialized = true;
+        } else {
+            // Already initialized - just create a new game
+            if (gameController != null) {
+                gameController.createNewGame();
+            }
         }
         startMenuPanel.setVisible(false);
         if (brickPanel != null) {
@@ -529,17 +528,11 @@ public class GuiController implements Initializable {
         if (ghostBrickPanel != null) {
             ghostBrickPanel.setVisible(true);
         }
-        if (scoreContainer != null) {
-            scoreContainer.setVisible(true);
-        }
-        if (nextBrickContainer != null) {
-            nextBrickContainer.setVisible(true);
+        if (sidebarContainer != null) {
+            sidebarContainer.setVisible(true);
         }
         if (gameBoard != null) {
             gameBoard.setVisible(true);
-        }
-        if (highScoreContainer != null) {
-            highScoreContainer.setVisible(true);
         }
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);

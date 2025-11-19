@@ -14,6 +14,9 @@ public class StartMenuPanel extends BorderPane {
     private final Button playButton;
 
     public StartMenuPanel() {
+        // Set size to match window and center content
+        this.setPrefSize(350, 510);
+
         VBox menuBox = new VBox(20);
         menuBox.setAlignment(Pos.CENTER);
 

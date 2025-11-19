@@ -15,26 +15,27 @@
         </center>
     </BorderPane>
 
-    <Group fx:id="groupNotification" layoutX="90" layoutY="125">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel"/>
-        </VBox>
+    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
     </Group>
 
-    <VBox fx:id="scoreContainer" layoutX="240" layoutY="50" spacing="10" alignment="TOP_CENTER">
-        <Label text="SCORE" styleClass="nextBrickLabel"/>
-        <Text fx:id="scoreText" text="0" styleClass="scoreClass"/>
+    <VBox fx:id="sidebarContainer" layoutX="240" layoutY="30" spacing="15" alignment="TOP_CENTER" prefWidth="100">
+        <VBox fx:id="scoreContainer" spacing="5" alignment="TOP_CENTER">
+            <Label text="SCORE" styleClass="nextBrickLabel"/>
+            <Text fx:id="scoreText" text="0" styleClass="scoreClass"/>
+        </VBox>
+
+        <VBox fx:id="highScoreContainer" spacing="5" alignment="TOP_CENTER">
+            <Label text="HIGHSCORE" styleClass="nextBrickLabel"/>
+            <Text fx:id="highScoreText" text="0" styleClass="highScoreClass"/>
+        </VBox>
+
+        <VBox fx:id="nextBrickContainer" spacing="5" alignment="TOP_CENTER">
+            <Label text="NEXT" styleClass="nextBrickLabel"/>
+            <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1"/>
+        </VBox>
     </VBox>
 
-    <VBox fx:id="nextBrickContainer" layoutX="240" layoutY="150" spacing="5" alignment="TOP_CENTER">
-        <Label text="NEXT" styleClass="nextBrickLabel"/>
-        <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1"/>
-    </VBox>
-
-    <VBox fx:id="highScoreContainer" layoutX="240" layoutY="270" spacing="5" alignment="TOP_CENTER">
-        <Label text="HIGHSCORE" styleClass="nextBrickLabel"/>
-        <Text fx:id="highScoreText" text="0" styleClass="highScoreClass"/>
-    </VBox>
+    <GameOverPanel fx:id="gameOverPanel" layoutX="0" layoutY="0"/>
 
     <stylesheets>
         <URL value="@window_style.css"/>
