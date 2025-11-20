@@ -97,6 +97,20 @@
     -fx-text-fill: cyan;
 }
 
+.levelClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
+    -fx-fill: yellow;
+    -fx-text-fill: yellow;
+}
+
+.linesClearedClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
+    -fx-fill: lime;
+    -fx-text-fill: lime;
+}
+
 .pauseStyle {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;

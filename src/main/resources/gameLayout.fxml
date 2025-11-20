@@ -29,9 +29,19 @@
             <Text fx:id="highScoreText" text="0" styleClass="highScoreClass"/>
         </VBox>
 
+        <VBox fx:id="levelContainer" spacing="5" alignment="TOP_CENTER">
+            <Label text="LEVEL" styleClass="nextBrickLabel"/>
+            <Text fx:id="levelText" text="1" styleClass="levelClass"/>
+        </VBox>
+
         <VBox fx:id="nextBrickContainer" spacing="5" alignment="TOP_CENTER">
             <Label text="NEXT" styleClass="nextBrickLabel"/>
             <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1"/>
+        </VBox>
+
+        <VBox fx:id="linesClearedContainer" spacing="5" alignment="TOP_CENTER">
+            <Label text="LINES" styleClass="nextBrickLabel"/>
+            <Text fx:id="linesClearedText" text="0" styleClass="linesClearedClass"/>
         </VBox>
     </VBox>
 

@@ -52,6 +52,12 @@ public class GuiController implements Initializable {
     private Text highScoreText;
 
     @FXML
+    private Text linesClearedText;
+
+    @FXML
+    private Text levelText;
+
+    @FXML
     private javafx.scene.layout.BorderPane gameBoard;
 
     @FXML
@@ -102,6 +108,22 @@ public class GuiController implements Initializable {
                 highScoreText.setFont(highScoreFont);
             }
             highScoreText.setText(String.valueOf(highScoreManager.getHighScore()));
+        }
+
+        // Initialize lines cleared text with digital font
+        if (linesClearedText != null) {
+            Font linesClearedFont = FontLoader.getFont(28);
+            if (linesClearedFont != null) {
+                linesClearedText.setFont(linesClearedFont);
+            }
+        }
+
+        // Initialize level text with digital font
+        if (levelText != null) {
+            Font levelFont = FontLoader.getFont(28);
+            if (levelFont != null) {
+                levelText.setFont(levelFont);
+            }
         }
 
         gamePanel.setFocusTraversable(true);
@@ -439,6 +461,51 @@ public class GuiController implements Initializable {
         integerProperty.addListener((obs, oldVal, newVal) -> {
             checkAndUpdateHighScore(newVal.intValue());
         });
+    }
+
+    public void bindLinesCleared(IntegerProperty integerProperty) {
+        linesClearedText.textProperty().bind(integerProperty.asString());
+    }
+
+    public void bindLevel(IntegerProperty integerProperty) {
+        levelText.textProperty().bind(integerProperty.asString());
+        // Listen for level changes to update game speed
+        integerProperty.addListener((obs, oldVal, newVal) -> {
+            updateGameSpeed(newVal.intValue());
+        });
+    }
+
+    /**
+     * Calculate the delay in milliseconds based on level
+     * Formula: Base speed decreases as level increases
+     * Level 1: 400ms, Level 2: 360ms, Level 3: 320ms, etc.
+     * Minimum speed: 100ms (at level 15+)
+     */
+    private double calculateSpeed(int level) {
+        double baseSpeed = 400.0;
+        double speedDecrease = 30.0; // Decrease by 30ms per level
+        double minSpeed = 100.0;
+
+        double speed = baseSpeed - ((level - 1) * speedDecrease);
+        return Math.max(speed, minSpeed);
+    }
+
+    /**
+     * Updates the game speed based on the current level
+     */
+    private void updateGameSpeed(int level) {
+        if (timeLine != null) {
+            double newSpeed = calculateSpeed(level);
+            timeLine.stop();
+            timeLine.getKeyFrames().clear();
+            timeLine.getKeyFrames().add(new KeyFrame(
+                Duration.millis(newSpeed),
+                ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+            ));
+            if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+                timeLine.play();
+            }
+        }
     }
 
     /**
