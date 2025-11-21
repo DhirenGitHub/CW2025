@@ -15,7 +15,7 @@ public class GameOverPanel extends BorderPane {
     public GameOverPanel() {
         // Add translucent background overlay
         this.getStyleClass().add("pauseOverlay");
-        this.setPrefSize(350, 510);
+        this.setPrefSize(800, 600);
 
         VBox menuBox = new VBox(15);
         menuBox.setAlignment(Pos.CENTER);

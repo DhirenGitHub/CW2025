@@ -29,6 +29,8 @@ import javafx.util.Duration;
 public class StartMenuPanel extends StackPane {
 
     private final Button playButton;
+    private final Button twoPlayerButton;
+    private final Button quitButton;
     private final Pane backgroundPane;
     private final List<FallingPiece> fallingPieces;
     private final Random random;
@@ -65,16 +67,16 @@ public class StartMenuPanel extends StackPane {
     };
 
     public StartMenuPanel() {
-        this.setPrefSize(350, 510);
+        this.setPrefSize(800, 600);
         this.random = new Random();
         this.fallingPieces = new ArrayList<>();
 
         // Create gradient background
         backgroundPane = new Pane();
-        backgroundPane.setPrefSize(350, 510);
+        backgroundPane.setPrefSize(800, 600);
 
         // Navy to black gradient
-        Rectangle gradientRect = new Rectangle(350, 510);
+        Rectangle gradientRect = new Rectangle(800, 600);
         LinearGradient gradient = new LinearGradient(
             0, 0, 0, 1, true, null,
             new Stop(0, Color.rgb(10, 20, 50)),
@@ -86,16 +88,24 @@ public class StartMenuPanel extends StackPane {
         // Create menu content
         VBox menuBox = new VBox(20);
         menuBox.setAlignment(Pos.CENTER);
-        menuBox.setMaxSize(350, 510);
+        menuBox.setMaxSize(800, 600);
 
         final Label titleLabel = new Label("TETRIS");
         titleLabel.getStyleClass().add("startMenuStyle");
 
-        playButton = new Button("PLAY");
+        playButton = new Button("1 PLAYER");
         playButton.getStyleClass().add("ipad-dark-grey");
-        playButton.setPrefWidth(150);
+        playButton.setPrefWidth(200);
 
-        menuBox.getChildren().addAll(titleLabel, playButton);
+        twoPlayerButton = new Button("2 PLAYER");
+        twoPlayerButton.getStyleClass().add("ipad-dark-grey");
+        twoPlayerButton.setPrefWidth(200);
+
+        quitButton = new Button("QUIT");
+        quitButton.getStyleClass().add("ipad-dark-grey");
+        quitButton.setPrefWidth(200);
+
+        menuBox.getChildren().addAll(titleLabel, playButton, twoPlayerButton, quitButton);
 
         // Stack background behind menu
         this.getChildren().addAll(backgroundPane, menuBox);
@@ -171,7 +181,7 @@ public class StartMenuPanel extends StackPane {
 
         FallingPiece piece = new FallingPiece();
         piece.pane = piecePane;
-        piece.x = random.nextDouble() * 300;
+        piece.x = random.nextDouble() * 750;  // Updated for 800px width
         piece.y = -50 - random.nextDouble() * 100; // Start above screen
         piece.speed = 0.3 + depth * 0.7; // Faster when closer (parallax)
         piece.depth = depth;
@@ -197,8 +207,8 @@ public class StartMenuPanel extends StackPane {
             piece.y += piece.speed;
             piece.pane.setLayoutY(piece.y);
 
-            // Reset piece when it goes off screen
-            if (piece.y > 520) {
+            // Reset piece when it goes off screen (updated for 600px height)
+            if (piece.y > 610) {
                 backgroundPane.getChildren().remove(piece.pane);
                 FallingPiece newPiece = createRandomPiece();
                 fallingPieces.set(i, newPiece);
@@ -233,6 +243,14 @@ public class StartMenuPanel extends StackPane {
 
     public Button getPlayButton() {
         return playButton;
+    }
+
+    public Button getTwoPlayerButton() {
+        return twoPlayerButton;
+    }
+
+    public Button getQuitButton() {
+        return quitButton;
     }
 
     // Inner class to track falling piece data

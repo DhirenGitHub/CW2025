@@ -121,3 +121,50 @@
 .pauseOverlay {
     -fx-background-color: rgba(0, 0, 0, 0.75);
 }
+
+.victoryStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 56;
+    -fx-fill: gold;
+    -fx-text-fill: gold;
+}
+
+.playerLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 20;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.statLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 14;
+    -fx-text-fill: white;
+}
+
+.controlsLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 10;
+    -fx-text-fill: #aaaaaa;
+}
+
+.scoreClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.levelClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: yellow;
+    -fx-text-fill: yellow;
+}
+
+.linesClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: lime;
+    -fx-text-fill: lime;
+}

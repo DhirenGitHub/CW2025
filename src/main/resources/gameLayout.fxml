@@ -7,18 +7,18 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 <Pane fx:id="rootPane" fx:controller="com.comp2042.GuiController"
-      xmlns:fx="http://javafx.com/fxml">
+      xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
     <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="225" layoutY="45">
         <center>
             <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
         </center>
     </BorderPane>
 
-    <Group fx:id="groupNotification" layoutX="0" layoutY="0">
+    <Group fx:id="groupNotification" layoutX="225" layoutY="45">
     </Group>
 
-    <VBox fx:id="sidebarContainer" layoutX="240" layoutY="30" spacing="15" alignment="TOP_CENTER" prefWidth="100">
+    <VBox fx:id="sidebarContainer" layoutX="465" layoutY="75" spacing="15" alignment="TOP_CENTER" prefWidth="100">
         <VBox fx:id="scoreContainer" spacing="5" alignment="TOP_CENTER">
             <Label text="SCORE" styleClass="nextBrickLabel"/>
             <Text fx:id="scoreText" text="0" styleClass="scoreClass"/>

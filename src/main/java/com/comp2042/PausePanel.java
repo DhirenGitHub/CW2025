@@ -18,7 +18,7 @@ public class PausePanel extends BorderPane {
     public PausePanel() {
         // Add translucent background overlay
         this.getStyleClass().add("pauseOverlay");
-        this.setPrefSize(350, 510); // Match window size
+        this.setPrefSize(800, 600); // Match window size
 
         VBox menuBox = new VBox(15);
         menuBox.setAlignment(Pos.CENTER);

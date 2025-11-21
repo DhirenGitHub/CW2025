@@ -26,6 +26,8 @@ import javafx.util.Duration;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    private static final double GAME_BASE_X = 237.0;  // 225 (gameBoard) + 12 (border)
+    private static final double GAME_BASE_Y = 65.0;   // 45 (gameBoard) + 12 (border)
 
     @FXML
     private GridPane gamePanel;
@@ -90,6 +92,8 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    private Runnable modeSwitch;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -156,7 +160,7 @@ public class GuiController implements Initializable {
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
-                if (keyEvent.getCode() == KeyCode.P) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE) {
                     togglePause();
                     keyEvent.consume();
                 }
@@ -186,9 +190,19 @@ public class GuiController implements Initializable {
         startMenuPanel.setLayoutY(0);
         rootPane.getChildren().add(startMenuPanel);
         startMenuPanel.getPlayButton().setOnAction(e -> startGame());
+        startMenuPanel.getTwoPlayerButton().setOnAction(e -> {
+            if (modeSwitch != null) {
+                modeSwitch.run();
+            }
+        });
+        startMenuPanel.getQuitButton().setOnAction(e -> javafx.application.Platform.exit());
 
         // Show start menu initially
         showStartMenu();
+    }
+
+    public void setModeSwitch(Runnable modeSwitch) {
+        this.modeSwitch = modeSwitch;
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -211,8 +225,8 @@ public class GuiController implements Initializable {
                 brickPanel.add(rectangle, j, i);
             }
         }
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setLayoutX(GAME_BASE_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        brickPanel.setLayoutY(-42 + GAME_BASE_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
         // Initialize ghost brick panel
         ghostBrickPanel = new GridPane();
@@ -349,8 +363,8 @@ public class GuiController implements Initializable {
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            brickPanel.setLayoutX(GAME_BASE_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+            brickPanel.setLayoutY(-42 + GAME_BASE_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
@@ -365,8 +379,8 @@ public class GuiController implements Initializable {
 
     private void updateGhostBrick(ViewData brick) {
         // Position ghost brick at the landing position (same X as brickPanel, Y at ghost position)
-        ghostBrickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
+        ghostBrickPanel.setLayoutX(GAME_BASE_X + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        ghostBrickPanel.setLayoutY(-42 + GAME_BASE_Y + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
 
         // Update ghost brick appearance - semi-transparent version of the brick
         for (int i = 0; i < brick.getBrickData().length; i++) {
