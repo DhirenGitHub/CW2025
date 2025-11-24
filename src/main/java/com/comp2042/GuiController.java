@@ -16,6 +16,8 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -95,6 +97,12 @@ public class GuiController implements Initializable {
 
     private Runnable modeSwitch;
 
+    private MediaPlayer gameBackgroundMusic;
+    private MediaPlayer stageClearSound;
+    private MediaPlayer breakSound;
+    private MediaPlayer gameOverMusic;
+    private MediaPlayer buttonSound;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Load digital font using FontLoader
@@ -170,7 +178,10 @@ public class GuiController implements Initializable {
 
         // Wire up game over panel buttons
         gameOverPanel.getNewGameButton().setOnAction(e -> newGame(null));
-        gameOverPanel.getHomeButton().setOnAction(e -> returnToHome());
+        gameOverPanel.getHomeButton().setOnAction(e -> {
+            playButtonSound();
+            returnToHome();
+        });
 
         // Initialize pause panel with full-screen overlay
         pausePanel = new PausePanel();
@@ -180,22 +191,36 @@ public class GuiController implements Initializable {
         rootPane.getChildren().add(pausePanel);
 
         // Wire up pause panel buttons
-        pausePanel.getResumeButton().setOnAction(e -> togglePause());
+        pausePanel.getResumeButton().setOnAction(e -> {
+            playButtonSound();
+            togglePause();
+        });
         pausePanel.getNewGameButton().setOnAction(e -> newGame(null));
-        pausePanel.getHomeButton().setOnAction(e -> returnToHome());
+        pausePanel.getHomeButton().setOnAction(e -> {
+            playButtonSound();
+            returnToHome();
+        });
 
         // Initialize start menu with full-screen centering
         startMenuPanel = new StartMenuPanel();
         startMenuPanel.setLayoutX(0);
         startMenuPanel.setLayoutY(0);
         rootPane.getChildren().add(startMenuPanel);
-        startMenuPanel.getPlayButton().setOnAction(e -> startGame());
+        startMenuPanel.getPlayButton().setOnAction(e -> {
+            playButtonSound();
+            startGame();
+        });
         startMenuPanel.getTwoPlayerButton().setOnAction(e -> {
+            playButtonSound();
+            startMenuPanel.stopMusic();
             if (modeSwitch != null) {
                 modeSwitch.run();
             }
         });
-        startMenuPanel.getQuitButton().setOnAction(e -> javafx.application.Platform.exit());
+        startMenuPanel.getQuitButton().setOnAction(e -> {
+            playButtonSound();
+            javafx.application.Platform.exit();
+        });
 
         // Show start menu initially
         showStartMenu();
@@ -471,14 +496,17 @@ public class GuiController implements Initializable {
 
     public void bindScore(IntegerProperty integerProperty) {
         scoreText.textProperty().bind(integerProperty.asString());
-        // Listen for score changes to check for new high score
-        integerProperty.addListener((obs, oldVal, newVal) -> {
-            checkAndUpdateHighScore(newVal.intValue());
-        });
     }
 
     public void bindLinesCleared(IntegerProperty integerProperty) {
         linesClearedText.textProperty().bind(integerProperty.asString());
+        // Listen for lines cleared changes to play break sound
+        integerProperty.addListener((obs, oldVal, newVal) -> {
+            // Play sound when lines are cleared (whenever the value increases)
+            if (newVal.intValue() > oldVal.intValue()) {
+                playBreakSound();
+            }
+        });
     }
 
     public void bindLevel(IntegerProperty integerProperty) {
@@ -486,6 +514,10 @@ public class GuiController implements Initializable {
         // Listen for level changes to update game speed
         integerProperty.addListener((obs, oldVal, newVal) -> {
             updateGameSpeed(newVal.intValue());
+            // Play stage clear sound when leveling up (but not on initial level 1)
+            if (oldVal.intValue() > 0 && newVal.intValue() > oldVal.intValue()) {
+                playStageClearSound();
+            }
         });
     }
 
@@ -534,16 +566,35 @@ public class GuiController implements Initializable {
         }
     }
 
-    public void gameOver() {
+    public void gameOver(int currentScore) {
         timeLine.stop();
+        stopGameMusic();
+
+        // Check if this is a new high score
+        boolean isNewHighScore = false;
+        if (highScoreManager != null) {
+            isNewHighScore = highScoreManager.checkAndUpdateHighScore(currentScore);
+            if (isNewHighScore && highScoreText != null) {
+                highScoreText.setText(String.valueOf(highScoreManager.getHighScore()));
+            }
+        }
+
+        System.out.println("Game Over - Current Score: " + currentScore + ", Is New High Score: " + isNewHighScore);
+        gameOverPanel.setNewHighScore(isNewHighScore);
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+
+        // Play appropriate game over music
+        playGameOverMusic(isNewHighScore);
     }
 
     public void newGame(ActionEvent actionEvent) {
+        playButtonSound();
         if (timeLine != null) {
             timeLine.stop();
         }
+        stopGameOverMusic();
+        initializeGameMusic();
         gameOverPanel.setVisible(false);
         pausePanel.setVisible(false);
         startMenuPanel.setVisible(false);
@@ -557,6 +608,7 @@ public class GuiController implements Initializable {
     }
 
     public void pauseGame(ActionEvent actionEvent) {
+        playButtonSound();
         togglePause();
     }
 
@@ -581,6 +633,7 @@ public class GuiController implements Initializable {
 
     private void showStartMenu() {
         startMenuPanel.setVisible(true);
+        startMenuPanel.resumeAnimation();
         gameOverPanel.setVisible(false);
         pausePanel.setVisible(false);
         // Hide game elements
@@ -620,7 +673,9 @@ public class GuiController implements Initializable {
                 gameController.createNewGame();
             }
         }
+        startMenuPanel.stopMusic();
         startMenuPanel.setVisible(false);
+        initializeGameMusic();
         if (brickPanel != null) {
             brickPanel.setVisible(true);
         }
@@ -647,10 +702,101 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    private void initializeGameMusic() {
+        try {
+            if (gameBackgroundMusic != null) {
+                gameBackgroundMusic.stop();
+            }
+            String musicPath = getClass().getResource("/audio/one_player_bg.mp3").toExternalForm();
+            Media media = new Media(musicPath);
+            gameBackgroundMusic = new MediaPlayer(media);
+            gameBackgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
+            gameBackgroundMusic.setVolume(0.5);
+            gameBackgroundMusic.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load game background music: " + e.getMessage());
+        }
+    }
+
+    private void stopGameMusic() {
+        if (gameBackgroundMusic != null) {
+            gameBackgroundMusic.stop();
+        }
+    }
+
+    private void playStageClearSound() {
+        try {
+            if (stageClearSound != null) {
+                stageClearSound.stop();
+            }
+            String soundPath = getClass().getResource("/audio/stage_clear.mp3").toExternalForm();
+            Media media = new Media(soundPath);
+            stageClearSound = new MediaPlayer(media);
+            stageClearSound.setVolume(0.7);
+            stageClearSound.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load stage clear sound: " + e.getMessage());
+        }
+    }
+
+    private void playBreakSound() {
+        try {
+            if (breakSound != null) {
+                breakSound.stop();
+            }
+            String soundPath = getClass().getResource("/audio/break.wav").toExternalForm();
+            Media media = new Media(soundPath);
+            breakSound = new MediaPlayer(media);
+            breakSound.setVolume(0.6);
+            breakSound.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load break sound: " + e.getMessage());
+        }
+    }
+
+    private void playGameOverMusic(boolean isNewHighScore) {
+        try {
+            if (gameOverMusic != null) {
+                gameOverMusic.stop();
+            }
+            String musicFile = isNewHighScore ? "highscore.mp3" : "one_player_gameover.mp3";
+            String musicPath = getClass().getResource("/audio/" + musicFile).toExternalForm();
+            Media media = new Media(musicPath);
+            gameOverMusic = new MediaPlayer(media);
+            gameOverMusic.setVolume(0.5);
+            gameOverMusic.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load game over music: " + e.getMessage());
+        }
+    }
+
+    private void stopGameOverMusic() {
+        if (gameOverMusic != null) {
+            gameOverMusic.stop();
+        }
+    }
+
+    private void playButtonSound() {
+        try {
+            if (buttonSound != null) {
+                buttonSound.stop();
+            }
+            String soundPath = getClass().getResource("/audio/button.wav").toExternalForm();
+            Media media = new Media(soundPath);
+            buttonSound = new MediaPlayer(media);
+            buttonSound.setVolume(0.5);
+            buttonSound.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load button sound: " + e.getMessage());
+        }
+    }
+
     private void returnToHome() {
         if (timeLine != null) {
             timeLine.stop();
         }
+        stopGameMusic();
+        stopGameOverMusic();
         isPause.setValue(Boolean.FALSE);
         pausePanel.setVisible(false);
         showStartMenu();

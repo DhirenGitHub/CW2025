@@ -32,7 +32,7 @@ public class GameController implements InputEventListener {
                 board.getScore().addLinesCleared(clearRow.getLinesRemoved());
             }
             if (board.createNewBrick()) {
-                viewGuiController.gameOver();
+                viewGuiController.gameOver(board.getScore().scoreProperty().get());
             }
 
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
@@ -75,7 +75,7 @@ public class GameController implements InputEventListener {
             board.getScore().addLinesCleared(clearRow.getLinesRemoved());
         }
         if (board.createNewBrick()) {
-            viewGuiController.gameOver();
+            viewGuiController.gameOver(board.getScore().scoreProperty().get());
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         return new DownData(clearRow, board.getViewData());

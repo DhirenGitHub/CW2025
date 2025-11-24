@@ -14,6 +14,8 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -69,6 +71,9 @@ public class TwoPlayerGuiController implements Initializable {
     private boolean gameInitialized = false;
 
     private Runnable modeSwitch;
+    private MediaPlayer gameBackgroundMusic;
+    private MediaPlayer gameOverMusic;
+    private MediaPlayer buttonSound;
 
     // Base positions for each player's game board
     private static final double PLAYER1_BASE_X = 32.0;  // 20 (BorderPane) + 12 (border)
@@ -119,18 +124,34 @@ public class TwoPlayerGuiController implements Initializable {
             rootPane.getChildren().add(victoryPanel);
         }
         victoryPanel.setVisible(false);
-        victoryPanel.getNewGameButton().setOnAction(e -> newGame());
-        victoryPanel.getHomeButton().setOnAction(e -> returnToHome());
+        victoryPanel.getNewGameButton().setOnAction(e -> {
+            playButtonSound();
+            newGame();
+        });
+        victoryPanel.getHomeButton().setOnAction(e -> {
+            playButtonSound();
+            returnToHome();
+        });
 
         pausePanel = new PausePanel();
         pausePanel.setVisible(false);
         pausePanel.setLayoutX(0);
         pausePanel.setLayoutY(0);
         rootPane.getChildren().add(pausePanel);
-        pausePanel.getResumeButton().setOnAction(e -> togglePause());
-        pausePanel.getNewGameButton().setOnAction(e -> newGame());
-        pausePanel.getHomeButton().setOnAction(e -> returnToHome());
+        pausePanel.getResumeButton().setOnAction(e -> {
+            playButtonSound();
+            togglePause();
+        });
+        pausePanel.getNewGameButton().setOnAction(e -> {
+            playButtonSound();
+            newGame();
+        });
+        pausePanel.getHomeButton().setOnAction(e -> {
+            playButtonSound();
+            returnToHome();
+        });
 
+        initializeGameMusic();
         initializeGame();
     }
 
@@ -546,16 +567,22 @@ public class TwoPlayerGuiController implements Initializable {
     private void playerLost(int player) {
         if (timeLine1 != null) timeLine1.stop();
         if (timeLine2 != null) timeLine2.stop();
+        stopGameMusic();
 
         int winner = (player == 1) ? 2 : 1;
         victoryPanel.setWinner(winner);
         victoryPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+
+        // Play two player game over music
+        playGameOverMusic();
     }
 
     public void newGame() {
         if (timeLine1 != null) timeLine1.stop();
         if (timeLine2 != null) timeLine2.stop();
+        stopGameOverMusic();
+        initializeGameMusic();
 
         victoryPanel.setVisible(false);
         pausePanel.setVisible(false);
@@ -596,9 +623,69 @@ public class TwoPlayerGuiController implements Initializable {
         this.modeSwitch = modeSwitch;
     }
 
+    private void initializeGameMusic() {
+        try {
+            if (gameBackgroundMusic != null) {
+                gameBackgroundMusic.stop();
+            }
+            String musicPath = getClass().getResource("/audio/two_player_bg.mp3").toExternalForm();
+            Media media = new Media(musicPath);
+            gameBackgroundMusic = new MediaPlayer(media);
+            gameBackgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
+            gameBackgroundMusic.setVolume(0.5);
+            gameBackgroundMusic.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load game background music: " + e.getMessage());
+        }
+    }
+
+    private void stopGameMusic() {
+        if (gameBackgroundMusic != null) {
+            gameBackgroundMusic.stop();
+        }
+    }
+
+    private void playGameOverMusic() {
+        try {
+            if (gameOverMusic != null) {
+                gameOverMusic.stop();
+            }
+            String musicPath = getClass().getResource("/audio/two_player_gameover.mp3").toExternalForm();
+            Media media = new Media(musicPath);
+            gameOverMusic = new MediaPlayer(media);
+            gameOverMusic.setVolume(0.5);
+            gameOverMusic.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load two player game over music: " + e.getMessage());
+        }
+    }
+
+    private void stopGameOverMusic() {
+        if (gameOverMusic != null) {
+            gameOverMusic.stop();
+        }
+    }
+
+    private void playButtonSound() {
+        try {
+            if (buttonSound != null) {
+                buttonSound.stop();
+            }
+            String soundPath = getClass().getResource("/audio/button.wav").toExternalForm();
+            Media media = new Media(soundPath);
+            buttonSound = new MediaPlayer(media);
+            buttonSound.setVolume(0.5);
+            buttonSound.play();
+        } catch (Exception e) {
+            System.err.println("Failed to load button sound: " + e.getMessage());
+        }
+    }
+
     private void returnToHome() {
         if (timeLine1 != null) timeLine1.stop();
         if (timeLine2 != null) timeLine2.stop();
+        stopGameMusic();
+        stopGameOverMusic();
 
         if (modeSwitch != null) {
             modeSwitch.run();

@@ -14,11 +14,11 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -120,11 +120,11 @@ public class StartMenuPanel extends StackPane {
 
     private void initializeBackgroundMusic() {
         try {
-            String musicPath = getClass().getResource("/bg_music.mp3").toExternalForm();
+            String musicPath = getClass().getResource("/audio/main_menu.mp3").toExternalForm();
             Media media = new Media(musicPath);
             backgroundMusic = new MediaPlayer(media);
             backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE); // Loop forever
-            backgroundMusic.setVolume(0); // 50% volume
+            backgroundMusic.setVolume(0.5); // 50% volume
             backgroundMusic.play();
         } catch (Exception e) {
             System.err.println("Failed to load background music: " + e.getMessage());

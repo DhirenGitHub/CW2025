@@ -76,6 +76,13 @@
     -fx-text-fill: red;
 }
 
+.newHighScoreStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 32;
+    -fx-fill: cyan;
+    -fx-text-fill: cyan;
+}
+
 .startMenuStyle {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;

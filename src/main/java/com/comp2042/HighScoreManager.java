@@ -59,11 +59,14 @@ public class HighScoreManager {
      * @return true if a new high score was set, false otherwise
      */
     public boolean checkAndUpdateHighScore(int score) {
+        System.out.println("HighScoreManager - Checking score: " + score + " against highScore: " + highScore);
         if (score > highScore) {
+            System.out.println("NEW HIGH SCORE! Updating from " + highScore + " to " + score);
             highScore = score;
             saveHighScore();
             return true;
         }
+        System.out.println("Not a new high score");
         return false;
     }
 
