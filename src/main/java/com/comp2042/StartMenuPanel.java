@@ -30,6 +30,7 @@ public class StartMenuPanel extends StackPane {
 
     private final Button playButton;
     private final Button twoPlayerButton;
+    private final Button controlsButton;
     private final Button quitButton;
     private final Pane backgroundPane;
     private final List<FallingPiece> fallingPieces;
@@ -101,11 +102,15 @@ public class StartMenuPanel extends StackPane {
         twoPlayerButton.getStyleClass().add("ipad-dark-grey");
         twoPlayerButton.setPrefWidth(200);
 
+        controlsButton = new Button("CONTROLS");
+        controlsButton.getStyleClass().add("ipad-dark-grey");
+        controlsButton.setPrefWidth(200);
+
         quitButton = new Button("QUIT");
         quitButton.getStyleClass().add("ipad-dark-grey");
         quitButton.setPrefWidth(200);
 
-        menuBox.getChildren().addAll(titleLabel, playButton, twoPlayerButton, quitButton);
+        menuBox.getChildren().addAll(titleLabel, playButton, twoPlayerButton, controlsButton, quitButton);
 
         // Stack background behind menu
         this.getChildren().addAll(backgroundPane, menuBox);
@@ -247,6 +252,10 @@ public class StartMenuPanel extends StackPane {
 
     public Button getTwoPlayerButton() {
         return twoPlayerButton;
+    }
+
+    public Button getControlsButton() {
+        return controlsButton;
     }
 
     public Button getQuitButton() {

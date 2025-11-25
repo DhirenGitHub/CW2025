@@ -73,6 +73,8 @@ public class GuiController implements Initializable {
 
     private StartMenuPanel startMenuPanel;
 
+    private ControlsPanel controlsPanel;
+
     private Rectangle[][] displayMatrix;
 
     private boolean gameInitialized = false;
@@ -217,9 +219,24 @@ public class GuiController implements Initializable {
                 modeSwitch.run();
             }
         });
+        startMenuPanel.getControlsButton().setOnAction(e -> {
+            playButtonSound();
+            showControls();
+        });
         startMenuPanel.getQuitButton().setOnAction(e -> {
             playButtonSound();
             javafx.application.Platform.exit();
+        });
+
+        // Initialize controls panel
+        controlsPanel = new ControlsPanel();
+        controlsPanel.setLayoutX(0);
+        controlsPanel.setLayoutY(0);
+        controlsPanel.setVisible(false);
+        rootPane.getChildren().add(controlsPanel);
+        controlsPanel.getBackButton().setOnAction(e -> {
+            playButtonSound();
+            hideControls();
         });
 
         // Show start menu initially
@@ -658,6 +675,16 @@ public class GuiController implements Initializable {
         if (timeLine != null) {
             timeLine.stop();
         }
+    }
+
+    private void showControls() {
+        controlsPanel.setVisible(true);
+        startMenuPanel.setVisible(false);
+    }
+
+    private void hideControls() {
+        controlsPanel.setVisible(false);
+        startMenuPanel.setVisible(true);
     }
 
     private void startGame() {
