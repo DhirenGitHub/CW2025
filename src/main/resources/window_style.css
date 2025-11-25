@@ -18,24 +18,33 @@
     -fx-font-family: "Let's go Digital";
     -fx-padding: 20px 0 0 0;
     -fx-font-size: 16px;
-    -fx-text-fill: yellow;
+    -fx-text-fill: white;
 }
 
 .ipad-dark-grey {
-    -fx-background-color: linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%),
-    linear-gradient(#020b02, #3a3a3a),
-    linear-gradient(#9d9e9d 0%, #6b6a6b 20%, #343534 80%, #242424 100%),
-    linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%),
-    linear-gradient(#777777 0%, #606060 50%, #505250 51%, #2a2b2a 100%);
-    -fx-background-insets: 0, 1, 4, 5, 6;
-    -fx-background-radius: 9, 8, 5, 4, 3;
-    -fx-padding: 8;
-    /*-fx-font-family: "Helvetica";*/
+    -fx-background-color: #000000;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 3px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 10 20 10 20;
     -fx-font-family: "Let's go Digital";
-    -fx-font-size: 22px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.2), 1, 0.0, 0, 1);
+    -fx-text-fill: #ffffff;
+    -fx-cursor: hand;
+}
+
+.ipad-dark-grey:hover {
+    -fx-background-color: #222222;
+    -fx-border-color: #aaaaaa;
+    -fx-text-fill: #aaaaaa;
+}
+
+.ipad-dark-grey:pressed {
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #ffffff;
 }
 
 .rectangleStyle {
@@ -54,25 +63,115 @@
 }
 
 .bonusStyle {
-    -fx-font-size: 40px;
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48px;
     -fx-font-weight: bold;
+    -fx-text-fill: white;
 }
 
 .gameOverStyle {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;
-    -fx-background-color: red;
+    -fx-fill: red;
+    -fx-text-fill: red;
+}
+
+.newHighScoreStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 32;
+    -fx-fill: cyan;
+    -fx-text-fill: cyan;
+}
+
+.startMenuStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
 .scoreClass{
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 38;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.highScoreClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
+    -fx-fill: cyan;
+    -fx-text-fill: cyan;
+}
+
+.levelClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
     -fx-fill: yellow;
     -fx-text-fill: yellow;
+}
+
+.linesClearedClass{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 28;
+    -fx-fill: lime;
+    -fx-text-fill: lime;
 }
 
 .pauseStyle {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;
-    -fx-background-color: orange;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.pauseOverlay {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
+}
+
+.victoryStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 56;
+    -fx-fill: gold;
+    -fx-text-fill: gold;
+}
+
+.playerLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 20;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.statLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 14;
+    -fx-text-fill: white;
+}
+
+.controlsLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 10;
+    -fx-text-fill: #aaaaaa;
+}
+
+.scoreClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.levelClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: yellow;
+    -fx-text-fill: yellow;
+}
+
+.linesClassSmall {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24;
+    -fx-fill: lime;
+    -fx-text-fill: lime;
 }
