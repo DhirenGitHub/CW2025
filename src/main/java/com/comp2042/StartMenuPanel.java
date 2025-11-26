@@ -38,35 +38,6 @@ public class StartMenuPanel extends StackPane {
     private Timeline animationTimeline;
     private MediaPlayer backgroundMusic;
 
-    // Tetromino shapes (I, O, T, S, Z, J, L)
-    private static final int[][][] TETROMINOES = {
-        // I piece
-        {{1, 1, 1, 1}},
-        // O piece
-        {{1, 1}, {1, 1}},
-        // T piece
-        {{0, 1, 0}, {1, 1, 1}},
-        // S piece
-        {{0, 1, 1}, {1, 1, 0}},
-        // Z piece
-        {{1, 1, 0}, {0, 1, 1}},
-        // J piece
-        {{1, 0, 0}, {1, 1, 1}},
-        // L piece
-        {{0, 0, 1}, {1, 1, 1}}
-    };
-
-    // Colors for each tetromino
-    private static final Color[] TETROMINO_COLORS = {
-        Color.CYAN,      // I
-        Color.YELLOW,    // O
-        Color.PURPLE,    // T
-        Color.GREEN,     // S
-        Color.RED,       // Z
-        Color.BLUE,      // J
-        Color.ORANGE     // L
-    };
-
     public StartMenuPanel() {
         this.setPrefSize(800, 600);
         this.random = new Random();
@@ -150,9 +121,9 @@ public class StartMenuPanel extends StackPane {
     }
 
     private FallingPiece createRandomPiece() {
-        int type = random.nextInt(TETROMINOES.length);
-        int[][] shape = TETROMINOES[type];
-        Color baseColor = TETROMINO_COLORS[type];
+        int type = random.nextInt(GameConstants.TETROMINOES.length);
+        int[][] shape = GameConstants.TETROMINOES[type];
+        Color baseColor = GameConstants.TETROMINO_COLORS[type];
 
         // Random depth (0 = far/small, 1 = close/large)
         double depth = random.nextDouble();

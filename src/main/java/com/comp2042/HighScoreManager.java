@@ -7,7 +7,6 @@ import java.io.*;
  */
 public class HighScoreManager {
 
-    private static final String HIGH_SCORE_FILE = "highscore.txt";
     private int highScore;
 
     public HighScoreManager() {
@@ -18,7 +17,7 @@ public class HighScoreManager {
      * Loads the high score from file
      */
     private void loadHighScore() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(HIGH_SCORE_FILE))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(GameConstants.HIGH_SCORE_FILE))) {
             String line = reader.readLine();
             if (line != null && !line.trim().isEmpty()) {
                 highScore = Integer.parseInt(line.trim());
@@ -38,7 +37,7 @@ public class HighScoreManager {
      * Saves the high score to file
      */
     public void saveHighScore() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(HIGH_SCORE_FILE))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(GameConstants.HIGH_SCORE_FILE))) {
             writer.write(String.valueOf(highScore));
         } catch (IOException e) {
             System.err.println("Error saving high score: " + e.getMessage());

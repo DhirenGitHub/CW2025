@@ -14,8 +14,6 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -24,8 +22,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class TwoPlayerGuiController implements Initializable {
-
-    private static final int BRICK_SIZE = 20;
 
     // Player 1 components
     @FXML private GridPane gamePanel1;
@@ -71,18 +67,13 @@ public class TwoPlayerGuiController implements Initializable {
     private boolean gameInitialized = false;
 
     private Runnable modeSwitch;
-    private MediaPlayer gameBackgroundMusic;
-    private MediaPlayer gameOverMusic;
-    private MediaPlayer buttonSound;
-
-    // Base positions for each player's game board
-    private static final double PLAYER1_BASE_X = 32.0;  // 20 (BorderPane) + 12 (border)
-    private static final double PLAYER1_BASE_Y = 65.0;  // 45 (BorderPane) + 12 (border)
-    private static final double PLAYER2_BASE_X = 568.0; // 556 (BorderPane) + 12 (border)
-    private static final double PLAYER2_BASE_Y = 65.0;  // 45 (BorderPane) + 12 (border)
+    private AudioManager audioManager;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialize audio manager
+        audioManager = new AudioManager();
+
         FontLoader.loadFont();
         Font digitalFont = FontLoader.getFont(28);
 
@@ -221,7 +212,7 @@ public class TwoPlayerGuiController implements Initializable {
         Rectangle[][] displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
                 displayMatrix[i][j] = rectangle;
                 gamePanel.add(rectangle, j, i - 2);
@@ -237,18 +228,18 @@ public class TwoPlayerGuiController implements Initializable {
         Rectangle[][] rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
                 rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
                 rectangles[i][j] = rectangle;
                 brickPanel.add(rectangle, j, i);
             }
         }
 
-        double baseX = (player == 1) ? PLAYER1_BASE_X : PLAYER2_BASE_X;
-        double baseY = (player == 1) ? PLAYER1_BASE_Y : PLAYER2_BASE_Y;
+        double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
+        double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
 
-        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
+        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
 
         if (player == 1) {
             rectangles1 = rectangles;
@@ -264,7 +255,7 @@ public class TwoPlayerGuiController implements Initializable {
         Rectangle[][] ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
                 rectangle.setArcHeight(9);
                 rectangle.setArcWidth(9);
@@ -284,7 +275,7 @@ public class TwoPlayerGuiController implements Initializable {
         Rectangle[][] nextBrickRectangles = new Rectangle[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
                 nextBrickRectangles[i][j] = rectangle;
                 nextBrickPanel.add(rectangle, j, i);
@@ -393,11 +384,11 @@ public class TwoPlayerGuiController implements Initializable {
         GridPane brickPanel = (player == 1) ? brickPanel1 : brickPanel2;
         Rectangle[][] rectangles = (player == 1) ? rectangles1 : rectangles2;
 
-        double baseX = (player == 1) ? PLAYER1_BASE_X : PLAYER2_BASE_X;
-        double baseY = (player == 1) ? PLAYER1_BASE_Y : PLAYER2_BASE_Y;
+        double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
+        double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
 
-        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
+        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
 
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
@@ -414,11 +405,11 @@ public class TwoPlayerGuiController implements Initializable {
         GridPane ghostBrickPanel = (player == 1) ? ghostBrickPanel1 : ghostBrickPanel2;
         Rectangle[][] ghostRectangles = (player == 1) ? ghostRectangles1 : ghostRectangles2;
 
-        double baseX = (player == 1) ? PLAYER1_BASE_X : PLAYER2_BASE_X;
-        double baseY = (player == 1) ? PLAYER1_BASE_Y : PLAYER2_BASE_Y;
+        double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
+        double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
 
-        ghostBrickPanel.setLayoutX(baseX + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-42 + baseY + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * BRICK_SIZE);
+        ghostBrickPanel.setLayoutX(baseX + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
+        ghostBrickPanel.setLayoutY(-42 + baseY + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * GameConstants.BRICK_SIZE);
 
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
@@ -624,68 +615,29 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     private void initializeGameMusic() {
-        try {
-            if (gameBackgroundMusic != null) {
-                gameBackgroundMusic.stop();
-            }
-            String musicPath = getClass().getResource("/audio/two_player_bg.mp3").toExternalForm();
-            Media media = new Media(musicPath);
-            gameBackgroundMusic = new MediaPlayer(media);
-            gameBackgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
-            gameBackgroundMusic.setVolume(0.5);
-            gameBackgroundMusic.play();
-        } catch (Exception e) {
-            System.err.println("Failed to load game background music: " + e.getMessage());
-        }
+        audioManager.playTwoPlayerMusic();
     }
 
     private void stopGameMusic() {
-        if (gameBackgroundMusic != null) {
-            gameBackgroundMusic.stop();
-        }
+        audioManager.stopGameMusic();
     }
 
     private void playGameOverMusic() {
-        try {
-            if (gameOverMusic != null) {
-                gameOverMusic.stop();
-            }
-            String musicPath = getClass().getResource("/audio/two_player_gameover.mp3").toExternalForm();
-            Media media = new Media(musicPath);
-            gameOverMusic = new MediaPlayer(media);
-            gameOverMusic.setVolume(0.5);
-            gameOverMusic.play();
-        } catch (Exception e) {
-            System.err.println("Failed to load two player game over music: " + e.getMessage());
-        }
+        audioManager.playTwoPlayerGameOverMusic();
     }
 
     private void stopGameOverMusic() {
-        if (gameOverMusic != null) {
-            gameOverMusic.stop();
-        }
+        audioManager.stopGameOverMusic();
     }
 
     private void playButtonSound() {
-        try {
-            if (buttonSound != null) {
-                buttonSound.stop();
-            }
-            String soundPath = getClass().getResource("/audio/button.wav").toExternalForm();
-            Media media = new Media(soundPath);
-            buttonSound = new MediaPlayer(media);
-            buttonSound.setVolume(0.5);
-            buttonSound.play();
-        } catch (Exception e) {
-            System.err.println("Failed to load button sound: " + e.getMessage());
-        }
+        audioManager.playButtonSound();
     }
 
     private void returnToHome() {
         if (timeLine1 != null) timeLine1.stop();
         if (timeLine2 != null) timeLine2.stop();
-        stopGameMusic();
-        stopGameOverMusic();
+        audioManager.stopAllAudio();
 
         if (modeSwitch != null) {
             modeSwitch.run();
