@@ -72,13 +72,61 @@ public class SimpleBoard implements Board {
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         NextShapeInfo nextShape = brickRotator.getNextShape();
-        boolean conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
-        if (conflict) {
-            return false;
-        } else {
+
+        // Try rotation at current position first
+        boolean conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                                     (int) currentOffset.getX(), (int) currentOffset.getY());
+        if (!conflict) {
             brickRotator.setCurrentShape(nextShape.getPosition());
             return true;
         }
+
+        // Wall kick: Try shifting left
+        Point leftKick = new Point(currentOffset);
+        leftKick.translate(-1, 0);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) leftKick.getX(), (int) leftKick.getY());
+        if (!conflict) {
+            currentOffset = leftKick;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Wall kick: Try shifting right
+        Point rightKick = new Point(currentOffset);
+        rightKick.translate(1, 0);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) rightKick.getX(), (int) rightKick.getY());
+        if (!conflict) {
+            currentOffset = rightKick;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Wall kick: Try shifting two units left (for I-piece)
+        Point leftKick2 = new Point(currentOffset);
+        leftKick2.translate(-2, 0);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) leftKick2.getX(), (int) leftKick2.getY());
+        if (!conflict) {
+            currentOffset = leftKick2;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Wall kick: Try shifting two units right (for I-piece)
+        Point rightKick2 = new Point(currentOffset);
+        rightKick2.translate(2, 0);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) rightKick2.getX(), (int) rightKick2.getY());
+        if (!conflict) {
+            currentOffset = rightKick2;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // All kick attempts failed
+        return false;
     }
 
     @Override
