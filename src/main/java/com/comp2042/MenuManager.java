@@ -193,6 +193,15 @@ public class MenuManager {
     }
 
     /**
+     * Hides all menu panels (for use when starting a new game)
+     */
+    public void hideAllMenus() {
+        startMenuPanel.setVisible(false);
+        pausePanel.setVisible(false);
+        gameOverPanel.setVisible(false);
+    }
+
+    /**
      * Gets the start menu panel
      */
     public StartMenuPanel getStartMenuPanel() {

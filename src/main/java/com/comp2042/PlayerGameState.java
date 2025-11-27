@@ -92,4 +92,31 @@ public class PlayerGameState {
     public double getBaseY() {
         return (playerNumber == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
     }
+
+    /**
+     * Stops the timeline if it's running.
+     */
+    public void stopTimeline() {
+        if (timeline != null) {
+            timeline.stop();
+        }
+    }
+
+    /**
+     * Pauses the timeline if it's running.
+     */
+    public void pauseTimeline() {
+        if (timeline != null) {
+            timeline.pause();
+        }
+    }
+
+    /**
+     * Plays/resumes the timeline if it exists.
+     */
+    public void playTimeline() {
+        if (timeline != null) {
+            timeline.play();
+        }
+    }
 }

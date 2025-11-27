@@ -76,36 +76,20 @@ public class GuiController implements Initializable {
 
         // Load digital font using FontLoader
         FontLoader.loadFont();
-        Font digitalFont = FontLoader.getFont(38);
-        if (digitalFont != null && scoreText != null) {
-            scoreText.setFont(digitalFont);
-        }
+        setTextFont(scoreText, 38);
 
         // Initialize high score manager and display
         highScoreManager = new HighScoreManager();
+        setTextFont(highScoreText, 28);
         if (highScoreText != null) {
-            Font highScoreFont = FontLoader.getFont(28);
-            if (highScoreFont != null) {
-                highScoreText.setFont(highScoreFont);
-            }
             highScoreText.setText(String.valueOf(highScoreManager.getHighScore()));
         }
 
         // Initialize lines cleared text with digital font
-        if (linesClearedText != null) {
-            Font linesClearedFont = FontLoader.getFont(28);
-            if (linesClearedFont != null) {
-                linesClearedText.setFont(linesClearedFont);
-            }
-        }
+        setTextFont(linesClearedText, 28);
 
         // Initialize level text with digital font
-        if (levelText != null) {
-            Font levelFont = FontLoader.getFont(28);
-            if (levelFont != null) {
-                levelText.setFont(levelFont);
-            }
-        }
+        setTextFont(levelText, 28);
 
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -341,7 +325,7 @@ public class GuiController implements Initializable {
     }
 
     public void gameOver(int currentScore) {
-        timeLine.stop();
+        stopTimeline();
         audioManager.stopGameMusic();
 
         // Check if this is a new high score
@@ -363,19 +347,13 @@ public class GuiController implements Initializable {
 
     public void newGame(ActionEvent actionEvent) {
         audioManager.playButtonSound();
-        if (timeLine != null) {
-            timeLine.stop();
-        }
+        stopTimeline();
         audioManager.stopGameOverMusic();
         audioManager.playOnePlayerMusic();
-        gameOverPanel.setVisible(false);
-        menuManager.getStartMenuPanel().setVisible(false);
-        menuManager.getPausePanel().setVisible(false);
+        menuManager.hideAllMenus();
         eventListener.createNewGame();
         gamePanel.requestFocus();
-        if (timeLine != null) {
-            timeLine.play();
-        }
+        playTimeline();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
@@ -400,5 +378,35 @@ public class GuiController implements Initializable {
             menuManager.hidePauseMenu();
         }
         gamePanel.requestFocus();
+    }
+
+    /**
+     * Safely stops the timeline if it exists.
+     */
+    private void stopTimeline() {
+        if (timeLine != null) {
+            timeLine.stop();
+        }
+    }
+
+    /**
+     * Safely plays the timeline if it exists.
+     */
+    private void playTimeline() {
+        if (timeLine != null) {
+            timeLine.play();
+        }
+    }
+
+    /**
+     * Helper method to set font on a Text element with null checking.
+     */
+    private void setTextFont(Text textElement, int fontSize) {
+        if (textElement != null) {
+            Font font = FontLoader.getFont(fontSize);
+            if (font != null) {
+                textElement.setFont(font);
+            }
+        }
     }
 }
