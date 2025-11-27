@@ -356,14 +356,21 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         audioManager.playButtonSound();
         stopTimeline();
-        audioManager.stopGameOverMusic();
-        audioManager.playOnePlayerMusic();
+
+        // Only restart music if coming from game over (not from pause menu)
+        if (isGameOver.getValue() == Boolean.TRUE) {
+            audioManager.stopGameOverMusic();
+            audioManager.playOnePlayerMusic();
+        }
+
+        // Set game state to active BEFORE creating new game so refreshBrick works
+        isPause.setValue(Boolean.FALSE);
+        isGameOver.setValue(Boolean.FALSE);
+
         menuManager.hideAllMenus();
         eventListener.createNewGame();
         gamePanel.requestFocus();
         playTimeline();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
     }
 
     public void pauseGame(ActionEvent actionEvent) {

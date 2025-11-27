@@ -350,8 +350,12 @@ public class TwoPlayerGuiController implements Initializable {
     public void newGame() {
         player1.stopTimeline();
         player2.stopTimeline();
-        audioManager.stopGameOverMusic();
-        audioManager.playTwoPlayerMusic();
+
+        // Only restart music if coming from game over (not from pause menu)
+        if (isGameOver.getValue() == Boolean.TRUE) {
+            audioManager.stopGameOverMusic();
+            audioManager.playTwoPlayerMusic();
+        }
 
         victoryPanel.setVisible(false);
         pausePanel.setVisible(false);
@@ -360,6 +364,8 @@ public class TwoPlayerGuiController implements Initializable {
         player2.getBoard().newGame();
         refreshGameBackground(1);
         refreshGameBackground(2);
+        refreshBrick(1);
+        refreshBrick(2);
 
         player1.playTimeline();
         player2.playTimeline();
