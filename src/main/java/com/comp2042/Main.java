@@ -1,5 +1,9 @@
 package com.comp2042;
 
+import com.comp2042.ui.controllers.GameController;
+import com.comp2042.ui.controllers.GuiController;
+import com.comp2042.ui.controllers.TwoPlayerGuiController;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
