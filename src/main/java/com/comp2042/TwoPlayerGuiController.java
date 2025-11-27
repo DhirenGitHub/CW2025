@@ -45,22 +45,9 @@ public class TwoPlayerGuiController implements Initializable {
 
     private PausePanel pausePanel;
 
-    // Game state
-    private Board board1;
-    private Board board2;
-    private Rectangle[][] displayMatrix1;
-    private Rectangle[][] displayMatrix2;
-    private Rectangle[][] rectangles1;
-    private Rectangle[][] rectangles2;
-    private Rectangle[][] nextBrickRectangles1;
-    private Rectangle[][] nextBrickRectangles2;
-    private GridPane ghostBrickPanel1;
-    private GridPane ghostBrickPanel2;
-    private Rectangle[][] ghostRectangles1;
-    private Rectangle[][] ghostRectangles2;
-
-    private Timeline timeLine1;
-    private Timeline timeLine2;
+    // Player game states (encapsulates all player-specific data)
+    private PlayerGameState player1;
+    private PlayerGameState player2;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
@@ -105,8 +92,11 @@ public class TwoPlayerGuiController implements Initializable {
             }
         });
 
-        board1 = new SimpleBoard(25, 10);
-        board2 = new SimpleBoard(25, 10);
+        // Initialize player game states
+        Board board1 = new SimpleBoard(25, 10);
+        Board board2 = new SimpleBoard(25, 10);
+        player1 = new PlayerGameState(1, board1, gamePanel1, brickPanel1, nextBrickPanel1);
+        player2 = new PlayerGameState(2, board2, gamePanel2, brickPanel2, nextBrickPanel2);
 
         if (victoryPanel == null) {
             victoryPanel = new VictoryPanel();
@@ -193,13 +183,13 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     public void initializeGame() {
-        board1.createNewBrick();
-        initGameView(1, gamePanel1, brickPanel1, nextBrickPanel1, board1);
-        bindScore(1, board1.getScore());
+        player1.getBoard().createNewBrick();
+        initGameView(1, gamePanel1, brickPanel1, nextBrickPanel1, player1.getBoard());
+        bindScore(1, player1.getBoard().getScore());
 
-        board2.createNewBrick();
-        initGameView(2, gamePanel2, brickPanel2, nextBrickPanel2, board2);
-        bindScore(2, board2.getScore());
+        player2.getBoard().createNewBrick();
+        initGameView(2, gamePanel2, brickPanel2, nextBrickPanel2, player2.getBoard());
+        bindScore(2, player2.getBoard().getScore());
 
         gameInitialized = true;
     }
@@ -220,9 +210,9 @@ public class TwoPlayerGuiController implements Initializable {
         }
 
         if (player == 1) {
-            displayMatrix1 = displayMatrix;
+            player1.setDisplayMatrix(displayMatrix);
         } else {
-            displayMatrix2 = displayMatrix;
+            player2.setDisplayMatrix(displayMatrix);
         }
 
         Rectangle[][] rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
@@ -242,9 +232,9 @@ public class TwoPlayerGuiController implements Initializable {
         brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
 
         if (player == 1) {
-            rectangles1 = rectangles;
+            player1.setRectangles(rectangles);
         } else {
-            rectangles2 = rectangles;
+            player2.setRectangles(rectangles);
         }
 
         GridPane ghostBrickPanel = new GridPane();
@@ -265,11 +255,11 @@ public class TwoPlayerGuiController implements Initializable {
         }
 
         if (player == 1) {
-            ghostBrickPanel1 = ghostBrickPanel;
-            ghostRectangles1 = ghostRectangles;
+            player1.setGhostBrickPanel(ghostBrickPanel);
+            player1.setGhostRectangles(ghostRectangles);
         } else {
-            ghostBrickPanel2 = ghostBrickPanel;
-            ghostRectangles2 = ghostRectangles;
+            player2.setGhostBrickPanel(ghostBrickPanel);
+            player2.setGhostRectangles(ghostRectangles);
         }
 
         Rectangle[][] nextBrickRectangles = new Rectangle[4][4];
@@ -284,9 +274,9 @@ public class TwoPlayerGuiController implements Initializable {
         updateNextBrickPanel(player, brick.getNextBrickData(), nextBrickRectangles);
 
         if (player == 1) {
-            nextBrickRectangles1 = nextBrickRectangles;
+            player1.setNextBrickRectangles(nextBrickRectangles);
         } else {
-            nextBrickRectangles2 = nextBrickRectangles;
+            player2.setNextBrickRectangles(nextBrickRectangles);
         }
 
         Timeline timeLine = new Timeline(new KeyFrame(
@@ -297,26 +287,26 @@ public class TwoPlayerGuiController implements Initializable {
         timeLine.play();
 
         if (player == 1) {
-            timeLine1 = timeLine;
+            player1.setTimeline(timeLine);
         } else {
-            timeLine2 = timeLine;
+            player2.setTimeline(timeLine);
         }
     }
 
     private void moveBrickLeft(int player) {
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         board.moveBrickLeft();
         refreshBrick(player);
     }
 
     private void moveBrickRight(int player) {
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         board.moveBrickRight();
         refreshBrick(player);
     }
 
     private void rotateBrick(int player) {
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         board.rotateLeftBrick();
         refreshBrick(player);
     }
@@ -326,7 +316,7 @@ public class TwoPlayerGuiController implements Initializable {
             return;
         }
 
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         boolean canMove = board.moveBrickDown();
 
         if (!canMove) {
@@ -358,7 +348,7 @@ public class TwoPlayerGuiController implements Initializable {
             return;
         }
 
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         board.hardDrop();
         board.mergeBrickToBackground();
         ClearRow clearRow = board.clearRows();
@@ -379,10 +369,10 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     private void refreshBrick(int player) {
-        Board board = (player == 1) ? board1 : board2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         ViewData brick = board.getViewData();
         GridPane brickPanel = (player == 1) ? brickPanel1 : brickPanel2;
-        Rectangle[][] rectangles = (player == 1) ? rectangles1 : rectangles2;
+        Rectangle[][] rectangles = (player == 1) ? player1.getRectangles() : player2.getRectangles();
 
         double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
         double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
@@ -398,12 +388,12 @@ public class TwoPlayerGuiController implements Initializable {
 
         updateGhostBrick(player, brick);
         updateNextBrickPanel(player, brick.getNextBrickData(),
-            (player == 1) ? nextBrickRectangles1 : nextBrickRectangles2);
+            (player == 1) ? player1.getNextBrickRectangles() : player2.getNextBrickRectangles());
     }
 
     private void updateGhostBrick(int player, ViewData brick) {
-        GridPane ghostBrickPanel = (player == 1) ? ghostBrickPanel1 : ghostBrickPanel2;
-        Rectangle[][] ghostRectangles = (player == 1) ? ghostRectangles1 : ghostRectangles2;
+        GridPane ghostBrickPanel = (player == 1) ? player1.getGhostBrickPanel() : player2.getGhostBrickPanel();
+        Rectangle[][] ghostRectangles = (player == 1) ? player1.getGhostRectangles() : player2.getGhostRectangles();
 
         double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
         double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
@@ -482,8 +472,8 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     private void refreshGameBackground(int player) {
-        Board board = (player == 1) ? board1 : board2;
-        Rectangle[][] displayMatrix = (player == 1) ? displayMatrix1 : displayMatrix2;
+        Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
+        Rectangle[][] displayMatrix = (player == 1) ? player1.getDisplayMatrix() : player2.getDisplayMatrix();
         int[][] boardMatrix = board.getBoardMatrix();
 
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -531,18 +521,10 @@ public class TwoPlayerGuiController implements Initializable {
         }
     }
 
-    private double calculateSpeed(int level) {
-        double baseSpeed = 400.0;
-        double speedDecrease = 30.0;
-        double minSpeed = 100.0;
-        double speed = baseSpeed - ((level - 1) * speedDecrease);
-        return Math.max(speed, minSpeed);
-    }
-
     private void updateGameSpeed(int player, int level) {
-        Timeline timeLine = (player == 1) ? timeLine1 : timeLine2;
+        Timeline timeLine = (player == 1) ? player1.getTimeline() : player2.getTimeline();
         if (timeLine != null) {
-            double newSpeed = calculateSpeed(level);
+            double newSpeed = GameSpeedCalculator.calculateSpeed(level);
             timeLine.stop();
             timeLine.getKeyFrames().clear();
             timeLine.getKeyFrames().add(new KeyFrame(
@@ -556,8 +538,8 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     private void playerLost(int player) {
-        if (timeLine1 != null) timeLine1.stop();
-        if (timeLine2 != null) timeLine2.stop();
+        if (player1.getTimeline() != null) player1.getTimeline().stop();
+        if (player2.getTimeline() != null) player2.getTimeline().stop();
         stopGameMusic();
 
         int winner = (player == 1) ? 2 : 1;
@@ -570,21 +552,21 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     public void newGame() {
-        if (timeLine1 != null) timeLine1.stop();
-        if (timeLine2 != null) timeLine2.stop();
+        if (player1.getTimeline() != null) player1.getTimeline().stop();
+        if (player2.getTimeline() != null) player2.getTimeline().stop();
         stopGameOverMusic();
         initializeGameMusic();
 
         victoryPanel.setVisible(false);
         pausePanel.setVisible(false);
 
-        board1.newGame();
-        board2.newGame();
+        player1.getBoard().newGame();
+        player2.getBoard().newGame();
         refreshGameBackground(1);
         refreshGameBackground(2);
 
-        if (timeLine1 != null) timeLine1.play();
-        if (timeLine2 != null) timeLine2.play();
+        if (player1.getTimeline() != null) player1.getTimeline().play();
+        if (player2.getTimeline() != null) player2.getTimeline().play();
 
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
@@ -597,13 +579,13 @@ public class TwoPlayerGuiController implements Initializable {
         }
 
         if (isPause.getValue() == Boolean.FALSE) {
-            if (timeLine1 != null) timeLine1.pause();
-            if (timeLine2 != null) timeLine2.pause();
+            if (player1.getTimeline() != null) player1.getTimeline().pause();
+            if (player2.getTimeline() != null) player2.getTimeline().pause();
             isPause.setValue(Boolean.TRUE);
             pausePanel.setVisible(true);
         } else {
-            if (timeLine1 != null) timeLine1.play();
-            if (timeLine2 != null) timeLine2.play();
+            if (player1.getTimeline() != null) player1.getTimeline().play();
+            if (player2.getTimeline() != null) player2.getTimeline().play();
             isPause.setValue(Boolean.FALSE);
             pausePanel.setVisible(false);
         }
@@ -635,8 +617,8 @@ public class TwoPlayerGuiController implements Initializable {
     }
 
     private void returnToHome() {
-        if (timeLine1 != null) timeLine1.stop();
-        if (timeLine2 != null) timeLine2.stop();
+        if (player1.getTimeline() != null) player1.getTimeline().stop();
+        if (player2.getTimeline() != null) player2.getTimeline().stop();
         audioManager.stopAllAudio();
 
         if (modeSwitch != null) {

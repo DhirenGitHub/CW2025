@@ -311,26 +311,11 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Calculate the delay in milliseconds based on level
-     * Formula: Base speed decreases as level increases
-     * Level 1: 400ms, Level 2: 360ms, Level 3: 320ms, etc.
-     * Minimum speed: 100ms (at level 15+)
-     */
-    private double calculateSpeed(int level) {
-        double baseSpeed = 400.0;
-        double speedDecrease = 30.0; // Decrease by 30ms per level
-        double minSpeed = 100.0;
-
-        double speed = baseSpeed - ((level - 1) * speedDecrease);
-        return Math.max(speed, minSpeed);
-    }
-
-    /**
      * Updates the game speed based on the current level
      */
     private void updateGameSpeed(int level) {
         if (timeLine != null) {
-            double newSpeed = calculateSpeed(level);
+            double newSpeed = GameSpeedCalculator.calculateSpeed(level);
             timeLine.stop();
             timeLine.getKeyFrames().clear();
             timeLine.getKeyFrames().add(new KeyFrame(
