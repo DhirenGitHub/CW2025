@@ -11,7 +11,7 @@
     <GridPane fx:id="brickPanel1" vgap="1" hgap="1"/>
     <BorderPane styleClass="gameBoard" layoutX="20" layoutY="45" prefWidth="224" prefHeight="500">
         <center>
-            <GridPane fx:id="gamePanel1" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            <GridPane fx:id="gamePanel1" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
 
@@ -46,7 +46,7 @@
     <GridPane fx:id="brickPanel2" vgap="1" hgap="1"/>
     <BorderPane styleClass="gameBoard" layoutX="556" layoutY="45" prefWidth="224" prefHeight="500">
         <center>
-            <GridPane fx:id="gamePanel2" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            <GridPane fx:id="gamePanel2" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
 

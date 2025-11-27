@@ -285,9 +285,10 @@ public class TwoPlayerGuiController implements Initializable {
 
         renderer.refreshBrick(player, brick, playerState.getRectangles(),
                             playerState.getBaseX(), playerState.getBaseY());
+
+        GridPane brickPanel = (player == 1) ? brickPanel1 : brickPanel2;
         renderer.updateGhostBrick(brick, playerState.getGhostBrickPanel(),
-                                playerState.getGhostRectangles(),
-                                playerState.getBaseX(), playerState.getBaseY());
+                                playerState.getGhostRectangles(), brickPanel);
         renderer.updateNextBrickPanel(brick.getNextBrickData(), playerState.getNextBrickRectangles());
     }
 

@@ -71,8 +71,16 @@ public class GameRenderer {
                 brickPanel.add(rectangle, j, i);
             }
         }
-        brickPanel.setLayoutX(GameConstants.GAME_BASE_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + GameConstants.GAME_BASE_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
+
+        // Calculate cell dimensions (brick size + gap)
+        double cellWidth = brickPanel.getHgap() + GameConstants.BRICK_SIZE;
+        double cellHeight = brickPanel.getVgap() + GameConstants.BRICK_SIZE;
+
+        // Calculate offset for hidden rows at the top
+        double hiddenRowsOffset = GameConstants.HIDDEN_ROWS * cellHeight;
+
+        brickPanel.setLayoutX(GameConstants.GAME_BASE_X + brick.getxPosition() * cellWidth);
+        brickPanel.setLayoutY(GameConstants.GAME_BASE_Y - hiddenRowsOffset + brick.getyPosition() * cellHeight);
     }
 
     /**
@@ -176,8 +184,16 @@ public class GameRenderer {
      * Refreshes the brick display with new position and data
      */
     public void refreshBrick(ViewData brick) {
-        brickPanel.setLayoutX(GameConstants.GAME_BASE_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + GameConstants.GAME_BASE_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
+        // Calculate cell dimensions (brick size + gap)
+        double cellWidth = brickPanel.getHgap() + GameConstants.BRICK_SIZE;
+        double cellHeight = brickPanel.getVgap() + GameConstants.BRICK_SIZE;
+
+        // Calculate offset for hidden rows at the top
+        double hiddenRowsOffset = GameConstants.HIDDEN_ROWS * cellHeight;
+
+        brickPanel.setLayoutX(GameConstants.GAME_BASE_X + brick.getxPosition() * cellWidth);
+        brickPanel.setLayoutY(GameConstants.GAME_BASE_Y - hiddenRowsOffset + brick.getyPosition() * cellHeight);
+
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
@@ -193,9 +209,12 @@ public class GameRenderer {
      * Updates the ghost brick position and appearance
      */
     private void updateGhostBrick(ViewData brick) {
-        // Position ghost brick at the landing position (same X as brickPanel, Y at ghost position)
-        ghostBrickPanel.setLayoutX(GameConstants.GAME_BASE_X + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-42 + GameConstants.GAME_BASE_Y + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * GameConstants.BRICK_SIZE);
+        // Calculate cell height using brickPanel gap for consistency
+        double cellHeight = brickPanel.getVgap() + GameConstants.BRICK_SIZE;
+
+        // Position ghost brick relative to current brick position
+        ghostBrickPanel.setLayoutX(brickPanel.getLayoutX());
+        ghostBrickPanel.setLayoutY(brickPanel.getLayoutY() + (brick.getGhostYPosition() - brick.getyPosition()) * cellHeight);
 
         // Update ghost brick appearance - semi-transparent version of the brick
         for (int i = 0; i < brick.getBrickData().length; i++) {
@@ -203,8 +222,7 @@ public class GameRenderer {
                 if (brick.getBrickData()[i][j] != 0) {
                     Paint color = BrickColorManager.getColor(brick.getBrickData()[i][j]);
                     // Make it semi-transparent
-                    if (color instanceof Color) {
-                        Color solidColor = (Color) color;
+                    if (color instanceof Color solidColor) {
                         Color ghostColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.3);
                         ghostRectangles[i][j].setFill(ghostColor);
                         ghostRectangles[i][j].setStroke(solidColor.deriveColor(0, 1, 1, 0.5));

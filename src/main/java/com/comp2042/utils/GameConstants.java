@@ -18,25 +18,31 @@ public final class GameConstants {
     /** Size of each brick/block in pixels */
     public static final int BRICK_SIZE = 20;
 
+    /** Gap between bricks in pixels */
+    public static final int BRICK_GAP = 1;
+
+    /** Number of hidden rows at the top of the board (for spawning) */
+    public static final int HIDDEN_ROWS = 2;
+
     // Single Player Layout
     /** X coordinate base position for single player game board */
-    public static final double GAME_BASE_X = 237.0;  // 225 (gameBoard) + 12 (border)
+    public static final double GAME_BASE_X = 237.0;  // 225 (BorderPane layoutX) + 12 (border)
 
     /** Y coordinate base position for single player game board */
-    public static final double GAME_BASE_Y = 65.0;   // 45 (gameBoard) + 12 (border)
+    public static final double GAME_BASE_Y = 57.0;   // 45 (BorderPane layoutY) + 12 (border)
 
     // Two Player Layout
     /** X coordinate base position for player 1 game board */
-    public static final double PLAYER1_BASE_X = 32.0;  // 20 (BorderPane) + 12 (border)
+    public static final double PLAYER1_BASE_X = 32.0;  // 20 (BorderPane layoutX) + 12 (border)
 
     /** Y coordinate base position for player 1 game board */
-    public static final double PLAYER1_BASE_Y = 65.0;  // 45 (BorderPane) + 12 (border)
+    public static final double PLAYER1_BASE_Y = 57.0;  // 45 (BorderPane layoutY) + 12 (border)
 
     /** X coordinate base position for player 2 game board */
-    public static final double PLAYER2_BASE_X = 568.0; // 556 (BorderPane) + 12 (border)
+    public static final double PLAYER2_BASE_X = 568.0; // 556 (BorderPane layoutX) + 12 (border)
 
     /** Y coordinate base position for player 2 game board */
-    public static final double PLAYER2_BASE_Y = 65.0;  // 45 (BorderPane) + 12 (border)
+    public static final double PLAYER2_BASE_Y = 57.0;  // 45 (BorderPane layoutY) + 12 (border)
 
     // ===== File Paths =====
 
