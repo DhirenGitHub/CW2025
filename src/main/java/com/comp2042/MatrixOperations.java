@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 
 public class MatrixOperations {
 
-
-    //We don't want to instantiate this utility class
-    private MatrixOperations(){
-
+    private MatrixOperations() {
     }
 
     public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
@@ -28,22 +25,18 @@ public class MatrixOperations {
     }
 
     private static boolean checkOutOfBound(int[][] matrix, int targetX, int targetY) {
-        boolean returnValue = true;
-        if (targetX >= 0 && targetY < matrix.length && targetX < matrix[targetY].length) {
-            returnValue = false;
-        }
-        return returnValue;
+        return !(targetX >= 0 && targetY < matrix.length && targetX < matrix[targetY].length);
     }
 
     public static int[][] copy(int[][] original) {
-        int[][] myInt = new int[original.length][];
+        int[][] copiedMatrix = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
-            int[] aMatrix = original[i];
-            int aLength = aMatrix.length;
-            myInt[i] = new int[aLength];
-            System.arraycopy(aMatrix, 0, myInt[i], 0, aLength);
+            int[] row = original[i];
+            int rowLength = row.length;
+            copiedMatrix[i] = new int[rowLength];
+            System.arraycopy(row, 0, copiedMatrix[i], 0, rowLength);
         }
-        return myInt;
+        return copiedMatrix;
     }
 
     public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {

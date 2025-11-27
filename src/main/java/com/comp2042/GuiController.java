@@ -353,7 +353,6 @@ public class GuiController implements Initializable {
             }
         }
 
-        System.out.println("Game Over - Current Score: " + currentScore + ", Is New High Score: " + isNewHighScore);
         gameOverPanel.setNewHighScore(isNewHighScore);
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);

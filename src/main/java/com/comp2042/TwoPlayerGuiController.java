@@ -106,11 +106,11 @@ public class TwoPlayerGuiController implements Initializable {
         }
         victoryPanel.setVisible(false);
         victoryPanel.getNewGameButton().setOnAction(e -> {
-            playButtonSound();
+            audioManager.playButtonSound();
             newGame();
         });
         victoryPanel.getHomeButton().setOnAction(e -> {
-            playButtonSound();
+            audioManager.playButtonSound();
             returnToHome();
         });
 
@@ -120,19 +120,19 @@ public class TwoPlayerGuiController implements Initializable {
         pausePanel.setLayoutY(0);
         rootPane.getChildren().add(pausePanel);
         pausePanel.getResumeButton().setOnAction(e -> {
-            playButtonSound();
+            audioManager.playButtonSound();
             togglePause();
         });
         pausePanel.getNewGameButton().setOnAction(e -> {
-            playButtonSound();
+            audioManager.playButtonSound();
             newGame();
         });
         pausePanel.getHomeButton().setOnAction(e -> {
-            playButtonSound();
+            audioManager.playButtonSound();
             returnToHome();
         });
 
-        initializeGameMusic();
+        audioManager.playTwoPlayerMusic();
         initializeGame();
     }
 
@@ -541,7 +541,7 @@ public class TwoPlayerGuiController implements Initializable {
     private void playerLost(int player) {
         if (player1.getTimeline() != null) player1.getTimeline().stop();
         if (player2.getTimeline() != null) player2.getTimeline().stop();
-        stopGameMusic();
+        audioManager.stopGameMusic();
 
         int winner = (player == 1) ? 2 : 1;
         victoryPanel.setWinner(winner);
@@ -549,14 +549,14 @@ public class TwoPlayerGuiController implements Initializable {
         isGameOver.setValue(Boolean.TRUE);
 
         // Play two player game over music
-        playGameOverMusic();
+        audioManager.playTwoPlayerGameOverMusic();
     }
 
     public void newGame() {
         if (player1.getTimeline() != null) player1.getTimeline().stop();
         if (player2.getTimeline() != null) player2.getTimeline().stop();
-        stopGameOverMusic();
-        initializeGameMusic();
+        audioManager.stopGameOverMusic();
+        audioManager.playTwoPlayerMusic();
 
         victoryPanel.setVisible(false);
         pausePanel.setVisible(false);
@@ -595,26 +595,6 @@ public class TwoPlayerGuiController implements Initializable {
 
     public void setModeSwitch(Runnable modeSwitch) {
         this.modeSwitch = modeSwitch;
-    }
-
-    private void initializeGameMusic() {
-        audioManager.playTwoPlayerMusic();
-    }
-
-    private void stopGameMusic() {
-        audioManager.stopGameMusic();
-    }
-
-    private void playGameOverMusic() {
-        audioManager.playTwoPlayerGameOverMusic();
-    }
-
-    private void stopGameOverMusic() {
-        audioManager.stopGameOverMusic();
-    }
-
-    private void playButtonSound() {
-        audioManager.playButtonSound();
     }
 
     private void returnToHome() {
