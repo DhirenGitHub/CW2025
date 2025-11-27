@@ -268,6 +268,7 @@ public class GuiController implements Initializable {
         // Initialize KeyInputHandler now that we have the eventListener
         KeyInputHandler keyInputHandler = new KeyInputHandler(isPause, isGameOver, this, eventListener);
         gamePanel.setOnKeyPressed(keyInputHandler);
+        gamePanel.setOnKeyReleased(keyInputHandler);
     }
 
     public void setGameController(GameController gameController) {

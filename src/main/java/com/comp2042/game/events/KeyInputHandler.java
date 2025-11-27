@@ -6,6 +6,9 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Handles keyboard input for the game.
  * Processes player controls (movement, rotation, drop) and game controls (pause, new game).
@@ -16,6 +19,7 @@ public class KeyInputHandler implements EventHandler<KeyEvent> {
     private final BooleanProperty isGameOver;
     private final GuiController guiController;
     private final InputEventListener eventListener;
+    private final Set<KeyCode> pressedKeys = new HashSet<>();
 
     public KeyInputHandler(BooleanProperty isPause,
                           BooleanProperty isGameOver,
@@ -29,6 +33,22 @@ public class KeyInputHandler implements EventHandler<KeyEvent> {
 
     @Override
     public void handle(KeyEvent keyEvent) {
+        KeyCode code = keyEvent.getCode();
+
+        // Track key releases to allow re-triggering
+        if (keyEvent.getEventType() == KeyEvent.KEY_RELEASED) {
+            pressedKeys.remove(code);
+            return;
+        }
+
+        // Ignore auto-repeat events (when key is held down)
+        if (pressedKeys.contains(code)) {
+            return;
+        }
+
+        // Mark this key as pressed
+        pressedKeys.add(code);
+
         // Game controls (movement, rotation, drop) - only when game is active
         if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
             handleGameplayInput(keyEvent);

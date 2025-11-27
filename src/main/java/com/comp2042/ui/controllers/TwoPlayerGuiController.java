@@ -8,7 +8,9 @@ import com.comp2042.ui.renderers.TwoPlayerRenderer;
 import com.comp2042.utils.*;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -73,9 +75,21 @@ public class TwoPlayerGuiController implements Initializable {
 
         rootPane.setFocusTraversable(true);
         rootPane.requestFocus();
+
+        // Track pressed keys to prevent auto-repeat
+        Set<KeyCode> pressedKeys = new HashSet<>();
+
         rootPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+                KeyCode code = keyEvent.getCode();
+
+                // Ignore auto-repeat events (when key is held down)
+                if (pressedKeys.contains(code)) {
+                    return;
+                }
+                pressedKeys.add(code);
+
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     handlePlayer1Input(keyEvent);
                     handlePlayer2Input(keyEvent);
@@ -84,6 +98,13 @@ public class TwoPlayerGuiController implements Initializable {
                     togglePause();
                     keyEvent.consume();
                 }
+            }
+        });
+
+        rootPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                pressedKeys.remove(keyEvent.getCode());
             }
         });
 
