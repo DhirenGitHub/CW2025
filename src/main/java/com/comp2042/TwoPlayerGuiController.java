@@ -320,11 +320,8 @@ public class TwoPlayerGuiController implements Initializable {
         boolean canMove = board.moveBrickDown();
 
         if (!canMove) {
-            board.mergeBrickToBackground();
-            ClearRow clearRow = board.clearRows();
+            ClearRow clearRow = board.landBrickAndClearRows();
             if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
-                board.getScore().addLinesCleared(clearRow.getLinesRemoved());
                 updateGameSpeed(player, board.getScore().levelProperty().get());
             }
 
@@ -350,11 +347,8 @@ public class TwoPlayerGuiController implements Initializable {
 
         Board board = (player == 1) ? player1.getBoard() : player2.getBoard();
         board.hardDrop();
-        board.mergeBrickToBackground();
-        ClearRow clearRow = board.clearRows();
+        ClearRow clearRow = board.landBrickAndClearRows();
         if (clearRow.getLinesRemoved() > 0) {
-            board.getScore().add(clearRow.getScoreBonus());
-            board.getScore().addLinesCleared(clearRow.getLinesRemoved());
             updateGameSpeed(player, board.getScore().levelProperty().get());
         }
 
@@ -377,12 +371,15 @@ public class TwoPlayerGuiController implements Initializable {
         double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
         double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
 
-        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
+        int xPos = brick.getxPosition();
+        int yPos = brick.getyPosition();
+        brickPanel.setLayoutX(baseX + xPos * brickPanel.getVgap() + xPos * GameConstants.BRICK_SIZE);
+        brickPanel.setLayoutY(-42 + baseY + yPos * brickPanel.getHgap() + yPos * GameConstants.BRICK_SIZE);
 
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
+        int[][] brickData = brick.getBrickData();
+        for (int i = 0; i < brickData.length; i++) {
+            for (int j = 0; j < brickData[i].length; j++) {
+                setRectangleData(brickData[i][j], rectangles[i][j]);
             }
         }
 
@@ -398,13 +395,17 @@ public class TwoPlayerGuiController implements Initializable {
         double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
         double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
 
-        ghostBrickPanel.setLayoutX(baseX + brick.getxPosition() * ghostBrickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-42 + baseY + brick.getGhostYPosition() * ghostBrickPanel.getHgap() + brick.getGhostYPosition() * GameConstants.BRICK_SIZE);
+        int xPos = brick.getxPosition();
+        int ghostYPos = brick.getGhostYPosition();
+        ghostBrickPanel.setLayoutX(baseX + xPos * ghostBrickPanel.getVgap() + xPos * GameConstants.BRICK_SIZE);
+        ghostBrickPanel.setLayoutY(-42 + baseY + ghostYPos * ghostBrickPanel.getHgap() + ghostYPos * GameConstants.BRICK_SIZE);
 
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                if (brick.getBrickData()[i][j] != 0) {
-                    Paint color = getFillColor(brick.getBrickData()[i][j]);
+        int[][] brickData = brick.getBrickData();
+        for (int i = 0; i < brickData.length; i++) {
+            for (int j = 0; j < brickData[i].length; j++) {
+                int cellValue = brickData[i][j];
+                if (cellValue != 0) {
+                    Paint color = getFillColor(cellValue);
                     if (color instanceof Color) {
                         Color solidColor = (Color) color;
                         Color ghostColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.3);

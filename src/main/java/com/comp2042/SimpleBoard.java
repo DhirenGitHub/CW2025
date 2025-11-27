@@ -202,4 +202,21 @@ public class SimpleBoard implements Board {
         // Award +30 points for hard drop
         score.add(30);
     }
+
+    @Override
+    public ClearRow landBrickAndClearRows() {
+        // Merge the brick to the background
+        mergeBrickToBackground();
+
+        // Clear any completed rows
+        ClearRow clearRow = clearRows();
+
+        // Update score if rows were cleared
+        if (clearRow.getLinesRemoved() > 0) {
+            score.add(clearRow.getScoreBonus());
+            score.addLinesCleared(clearRow.getLinesRemoved());
+        }
+
+        return clearRow;
+    }
 }

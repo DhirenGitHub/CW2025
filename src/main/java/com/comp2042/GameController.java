@@ -25,12 +25,7 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
-            board.mergeBrickToBackground();
-            clearRow = board.clearRows();
-            if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
-                board.getScore().addLinesCleared(clearRow.getLinesRemoved());
-            }
+            clearRow = board.landBrickAndClearRows();
             if (board.createNewBrick()) {
                 viewGuiController.gameOver(board.getScore().scoreProperty().get());
             }
@@ -68,12 +63,7 @@ public class GameController implements InputEventListener {
         // Perform hard drop
         board.hardDrop();
         // Immediately trigger the merge and check for game over
-        board.mergeBrickToBackground();
-        ClearRow clearRow = board.clearRows();
-        if (clearRow.getLinesRemoved() > 0) {
-            board.getScore().add(clearRow.getScoreBonus());
-            board.getScore().addLinesCleared(clearRow.getLinesRemoved());
-        }
+        ClearRow clearRow = board.landBrickAndClearRows();
         if (board.createNewBrick()) {
             viewGuiController.gameOver(board.getScore().scoreProperty().get());
         }

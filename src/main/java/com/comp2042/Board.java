@@ -27,4 +27,13 @@ public interface Board {
     int getGhostYPosition();
 
     void hardDrop();
+
+    /**
+     * Lands the current brick and clears any completed rows.
+     * This encapsulates the common operation of merging a brick to the background
+     * and clearing rows, updating the score accordingly.
+     *
+     * @return ClearRow object containing information about cleared rows and score bonus
+     */
+    ClearRow landBrickAndClearRows();
 }
