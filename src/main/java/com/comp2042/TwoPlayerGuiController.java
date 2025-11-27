@@ -14,8 +14,6 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -55,26 +53,16 @@ public class TwoPlayerGuiController implements Initializable {
 
     private Runnable modeSwitch;
     private AudioManager audioManager;
+    private TwoPlayerRenderer renderer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Initialize audio manager
+        // Initialize audio manager and renderer
         audioManager = new AudioManager();
+        renderer = new TwoPlayerRenderer(rootPane, brickPanel1, brickPanel2);
 
-        FontLoader.loadFont();
-        Font digitalFont = FontLoader.getFont(28);
-
-        if (scoreText1 != null && digitalFont != null) {
-            scoreText1.setFont(digitalFont);
-            levelText1.setFont(digitalFont);
-            linesText1.setFont(digitalFont);
-        }
-
-        if (scoreText2 != null && digitalFont != null) {
-            scoreText2.setFont(digitalFont);
-            levelText2.setFont(digitalFont);
-            linesText2.setFont(digitalFont);
-        }
+        // Initialize fonts for all text elements
+        initializeFonts();
 
         rootPane.setFocusTraversable(true);
         rootPane.requestFocus();
@@ -98,39 +86,8 @@ public class TwoPlayerGuiController implements Initializable {
         player1 = new PlayerGameState(1, board1, gamePanel1, brickPanel1, nextBrickPanel1);
         player2 = new PlayerGameState(2, board2, gamePanel2, brickPanel2, nextBrickPanel2);
 
-        if (victoryPanel == null) {
-            victoryPanel = new VictoryPanel();
-            victoryPanel.setLayoutX(0);
-            victoryPanel.setLayoutY(0);
-            rootPane.getChildren().add(victoryPanel);
-        }
-        victoryPanel.setVisible(false);
-        victoryPanel.getNewGameButton().setOnAction(e -> {
-            audioManager.playButtonSound();
-            newGame();
-        });
-        victoryPanel.getHomeButton().setOnAction(e -> {
-            audioManager.playButtonSound();
-            returnToHome();
-        });
-
-        pausePanel = new PausePanel();
-        pausePanel.setVisible(false);
-        pausePanel.setLayoutX(0);
-        pausePanel.setLayoutY(0);
-        rootPane.getChildren().add(pausePanel);
-        pausePanel.getResumeButton().setOnAction(e -> {
-            audioManager.playButtonSound();
-            togglePause();
-        });
-        pausePanel.getNewGameButton().setOnAction(e -> {
-            audioManager.playButtonSound();
-            newGame();
-        });
-        pausePanel.getHomeButton().setOnAction(e -> {
-            audioManager.playButtonSound();
-            returnToHome();
-        });
+        // Initialize panels
+        initializePanels();
 
         audioManager.playTwoPlayerMusic();
         initializeGame();
@@ -196,101 +153,35 @@ public class TwoPlayerGuiController implements Initializable {
 
     private void initGameView(int player, GridPane gamePanel, GridPane brickPanel,
                               GridPane nextBrickPanel, Board board) {
+        PlayerGameState playerState = getPlayerState(player);
         int[][] boardMatrix = board.getBoardMatrix();
         ViewData brick = board.getViewData();
 
-        Rectangle[][] displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
-        for (int i = 2; i < boardMatrix.length; i++) {
-            for (int j = 0; j < boardMatrix[i].length; j++) {
-                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                displayMatrix[i][j] = rectangle;
-                gamePanel.add(rectangle, j, i - 2);
-            }
-        }
+        // Use renderer to initialize all visual components
+        Rectangle[][] displayMatrix = renderer.initializeDisplayMatrix(gamePanel, boardMatrix);
+        playerState.setDisplayMatrix(displayMatrix);
 
-        if (player == 1) {
-            player1.setDisplayMatrix(displayMatrix);
-        } else {
-            player2.setDisplayMatrix(displayMatrix);
-        }
+        double baseX = playerState.getBaseX();
+        double baseY = playerState.getBaseY();
+        Rectangle[][] rectangles = renderer.initializeBrickPanel(brickPanel, brick, baseX, baseY);
+        playerState.setRectangles(rectangles);
 
-        Rectangle[][] rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
-                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
-                rectangles[i][j] = rectangle;
-                brickPanel.add(rectangle, j, i);
-            }
-        }
+        GridPane ghostBrickPanel = renderer.initializeGhostBrickPanel(brick);
+        Rectangle[][] ghostRectangles = renderer.initializeGhostRectangles(ghostBrickPanel, brick);
+        playerState.setGhostBrickPanel(ghostBrickPanel);
+        playerState.setGhostRectangles(ghostRectangles);
 
-        double baseX = (player == 1) ? GameConstants.PLAYER1_BASE_X : GameConstants.PLAYER2_BASE_X;
-        double baseY = (player == 1) ? GameConstants.PLAYER1_BASE_Y : GameConstants.PLAYER2_BASE_Y;
+        Rectangle[][] nextBrickRectangles = renderer.initializeNextBrickPanel(nextBrickPanel, brick.getNextBrickData());
+        playerState.setNextBrickRectangles(nextBrickRectangles);
 
-        brickPanel.setLayoutX(baseX + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConstants.BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + baseY + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConstants.BRICK_SIZE);
-
-        if (player == 1) {
-            player1.setRectangles(rectangles);
-        } else {
-            player2.setRectangles(rectangles);
-        }
-
-        GridPane ghostBrickPanel = new GridPane();
-        ghostBrickPanel.setHgap(1);
-        ghostBrickPanel.setVgap(1);
-        rootPane.getChildren().add(0, ghostBrickPanel);
-
-        Rectangle[][] ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                rectangle.setArcHeight(9);
-                rectangle.setArcWidth(9);
-                ghostRectangles[i][j] = rectangle;
-                ghostBrickPanel.add(rectangle, j, i);
-            }
-        }
-
-        if (player == 1) {
-            player1.setGhostBrickPanel(ghostBrickPanel);
-            player1.setGhostRectangles(ghostRectangles);
-        } else {
-            player2.setGhostBrickPanel(ghostBrickPanel);
-            player2.setGhostRectangles(ghostRectangles);
-        }
-
-        Rectangle[][] nextBrickRectangles = new Rectangle[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                nextBrickRectangles[i][j] = rectangle;
-                nextBrickPanel.add(rectangle, j, i);
-            }
-        }
-        updateNextBrickPanel(player, brick.getNextBrickData(), nextBrickRectangles);
-
-        if (player == 1) {
-            player1.setNextBrickRectangles(nextBrickRectangles);
-        } else {
-            player2.setNextBrickRectangles(nextBrickRectangles);
-        }
-
+        // Create and start timeline
         Timeline timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(player, new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
-
-        if (player == 1) {
-            player1.setTimeline(timeLine);
-        } else {
-            player2.setTimeline(timeLine);
-        }
+        playerState.setTimeline(timeLine);
     }
 
     private void moveBrickLeft(int player) {
@@ -362,146 +253,20 @@ public class TwoPlayerGuiController implements Initializable {
 
     private void refreshBrick(int player) {
         PlayerGameState playerState = getPlayerState(player);
-        Board board = playerState.getBoard();
-        ViewData brick = board.getViewData();
-        GridPane brickPanel = (player == 1) ? brickPanel1 : brickPanel2;
-        Rectangle[][] rectangles = playerState.getRectangles();
+        ViewData brick = playerState.getBoard().getViewData();
 
-        double baseX = playerState.getBaseX();
-        double baseY = playerState.getBaseY();
-
-        int xPos = brick.getxPosition();
-        int yPos = brick.getyPosition();
-        brickPanel.setLayoutX(baseX + xPos * brickPanel.getVgap() + xPos * GameConstants.BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + baseY + yPos * brickPanel.getHgap() + yPos * GameConstants.BRICK_SIZE);
-
-        int[][] brickData = brick.getBrickData();
-        for (int i = 0; i < brickData.length; i++) {
-            for (int j = 0; j < brickData[i].length; j++) {
-                setRectangleData(brickData[i][j], rectangles[i][j]);
-            }
-        }
-
-        updateGhostBrick(player, brick);
-        updateNextBrickPanel(player, brick.getNextBrickData(), playerState.getNextBrickRectangles());
-    }
-
-    private void updateGhostBrick(int player, ViewData brick) {
-        PlayerGameState playerState = getPlayerState(player);
-        GridPane ghostBrickPanel = playerState.getGhostBrickPanel();
-        Rectangle[][] ghostRectangles = playerState.getGhostRectangles();
-
-        double baseX = playerState.getBaseX();
-        double baseY = playerState.getBaseY();
-
-        int xPos = brick.getxPosition();
-        int ghostYPos = brick.getGhostYPosition();
-        ghostBrickPanel.setLayoutX(baseX + xPos * ghostBrickPanel.getVgap() + xPos * GameConstants.BRICK_SIZE);
-        ghostBrickPanel.setLayoutY(-42 + baseY + ghostYPos * ghostBrickPanel.getHgap() + ghostYPos * GameConstants.BRICK_SIZE);
-
-        int[][] brickData = brick.getBrickData();
-        for (int i = 0; i < brickData.length; i++) {
-            for (int j = 0; j < brickData[i].length; j++) {
-                int cellValue = brickData[i][j];
-                if (cellValue != 0) {
-                    Paint color = getFillColor(cellValue);
-                    if (color instanceof Color) {
-                        Color solidColor = (Color) color;
-                        Color ghostColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.3);
-                        ghostRectangles[i][j].setFill(ghostColor);
-                        ghostRectangles[i][j].setStroke(solidColor.deriveColor(0, 1, 1, 0.5));
-                        ghostRectangles[i][j].setStrokeWidth(1);
-                    } else {
-                        ghostRectangles[i][j].setFill(Color.TRANSPARENT);
-                    }
-                } else {
-                    ghostRectangles[i][j].setFill(Color.TRANSPARENT);
-                    ghostRectangles[i][j].setStroke(null);
-                }
-            }
-        }
-    }
-
-    private void updateNextBrickPanel(int player, int[][] nextBrickData, Rectangle[][] nextBrickRectangles) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                nextBrickRectangles[i][j].setFill(Color.TRANSPARENT);
-                nextBrickRectangles[i][j].setArcHeight(0);
-                nextBrickRectangles[i][j].setArcWidth(0);
-            }
-        }
-
-        if (nextBrickData != null && nextBrickData.length > 0) {
-            int minRow = nextBrickData.length, maxRow = -1;
-            int minCol = nextBrickData[0].length, maxCol = -1;
-
-            for (int i = 0; i < nextBrickData.length; i++) {
-                for (int j = 0; j < nextBrickData[i].length; j++) {
-                    if (nextBrickData[i][j] != 0) {
-                        minRow = Math.min(minRow, i);
-                        maxRow = Math.max(maxRow, i);
-                        minCol = Math.min(minCol, j);
-                        maxCol = Math.max(maxCol, j);
-                    }
-                }
-            }
-
-            if (maxRow >= 0) {
-                int brickHeight = maxRow - minRow + 1;
-                int brickWidth = maxCol - minCol + 1;
-                int offsetRow = (4 - brickHeight) / 2;
-                int offsetCol = (4 - brickWidth) / 2;
-
-                for (int i = 0; i < nextBrickData.length; i++) {
-                    for (int j = 0; j < nextBrickData[i].length; j++) {
-                        if (nextBrickData[i][j] != 0) {
-                            int targetRow = offsetRow + (i - minRow);
-                            int targetCol = offsetCol + (j - minCol);
-
-                            if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
-                                Rectangle rect = nextBrickRectangles[targetRow][targetCol];
-                                rect.setFill(getFillColor(nextBrickData[i][j]));
-                                rect.setArcHeight(9);
-                                rect.setArcWidth(9);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        renderer.refreshBrick(player, brick, playerState.getRectangles(),
+                            playerState.getBaseX(), playerState.getBaseY());
+        renderer.updateGhostBrick(brick, playerState.getGhostBrickPanel(),
+                                playerState.getGhostRectangles(),
+                                playerState.getBaseX(), playerState.getBaseY());
+        renderer.updateNextBrickPanel(brick.getNextBrickData(), playerState.getNextBrickRectangles());
     }
 
     private void refreshGameBackground(int player) {
         PlayerGameState playerState = getPlayerState(player);
-        Board board = playerState.getBoard();
-        Rectangle[][] displayMatrix = playerState.getDisplayMatrix();
-        int[][] boardMatrix = board.getBoardMatrix();
-
-        for (int i = 2; i < boardMatrix.length; i++) {
-            for (int j = 0; j < boardMatrix[i].length; j++) {
-                setRectangleData(boardMatrix[i][j], displayMatrix[i][j]);
-            }
-        }
-    }
-
-    private void setRectangleData(int color, Rectangle rectangle) {
-        rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
-    }
-
-    private Paint getFillColor(int i) {
-        switch (i) {
-            case 0: return Color.TRANSPARENT;
-            case 1: return Color.AQUA;
-            case 2: return Color.BLUEVIOLET;
-            case 3: return Color.DARKGREEN;
-            case 4: return Color.YELLOW;
-            case 5: return Color.RED;
-            case 6: return Color.BEIGE;
-            case 7: return Color.BURLYWOOD;
-            default: return Color.WHITE;
-        }
+        renderer.refreshGameBackground(playerState.getDisplayMatrix(),
+                                      playerState.getBoard().getBoardMatrix());
     }
 
     private void bindScore(int player, Score score) {
@@ -614,5 +379,69 @@ public class TwoPlayerGuiController implements Initializable {
         if (modeSwitch != null) {
             modeSwitch.run();
         }
+    }
+
+    /**
+     * Initializes fonts for all text elements
+     */
+    private void initializeFonts() {
+        FontLoader.loadFont();
+        Font digitalFont = FontLoader.getFont(28);
+        if (digitalFont != null) {
+            setTextFont(scoreText1, digitalFont);
+            setTextFont(levelText1, digitalFont);
+            setTextFont(linesText1, digitalFont);
+            setTextFont(scoreText2, digitalFont);
+            setTextFont(levelText2, digitalFont);
+            setTextFont(linesText2, digitalFont);
+        }
+    }
+
+    /**
+     * Sets font on a text element with null checking
+     */
+    private void setTextFont(Text text, Font font) {
+        if (text != null && font != null) {
+            text.setFont(font);
+        }
+    }
+
+    /**
+     * Initializes victory and pause panels with their button handlers
+     */
+    private void initializePanels() {
+        if (victoryPanel == null) {
+            victoryPanel = new VictoryPanel();
+            victoryPanel.setLayoutX(0);
+            victoryPanel.setLayoutY(0);
+            rootPane.getChildren().add(victoryPanel);
+        }
+        victoryPanel.setVisible(false);
+        victoryPanel.getNewGameButton().setOnAction(e -> {
+            audioManager.playButtonSound();
+            newGame();
+        });
+        victoryPanel.getHomeButton().setOnAction(e -> {
+            audioManager.playButtonSound();
+            returnToHome();
+        });
+
+        pausePanel = new PausePanel();
+        pausePanel.setVisible(false);
+        pausePanel.setLayoutX(0);
+        pausePanel.setLayoutY(0);
+        rootPane.getChildren().add(pausePanel);
+        pausePanel.getResumeButton().setOnAction(e -> {
+            audioManager.playButtonSound();
+            togglePause();
+        });
+        pausePanel.getNewGameButton().setOnAction(e -> {
+            audioManager.playButtonSound();
+            newGame();
+        });
+        pausePanel.getHomeButton().setOnAction(e -> {
+            audioManager.playButtonSound();
+            returnToHome();
+        });
     }
 }

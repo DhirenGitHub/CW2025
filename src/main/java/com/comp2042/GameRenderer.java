@@ -62,7 +62,7 @@ public class GameRenderer {
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 Rectangle rectangle = new Rectangle(GameConstants.BRICK_SIZE, GameConstants.BRICK_SIZE);
-                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
+                rectangle.setFill(BrickColorManager.getColor(brick.getBrickData()[i][j]));
                 rectangles[i][j] = rectangle;
                 brickPanel.add(rectangle, j, i);
             }
@@ -157,7 +157,7 @@ public class GameRenderer {
 
                             if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
                                 Rectangle rect = nextBrickRectangles[targetRow][targetCol];
-                                rect.setFill(getFillColor(nextBrickData[i][j]));
+                                rect.setFill(BrickColorManager.getColor(nextBrickData[i][j]));
                                 rect.setArcHeight(9);
                                 rect.setArcWidth(9);
                             }
@@ -197,7 +197,7 @@ public class GameRenderer {
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 if (brick.getBrickData()[i][j] != 0) {
-                    Paint color = getFillColor(brick.getBrickData()[i][j]);
+                    Paint color = BrickColorManager.getColor(brick.getBrickData()[i][j]);
                     // Make it semi-transparent
                     if (color instanceof Color) {
                         Color solidColor = (Color) color;
@@ -231,45 +231,8 @@ public class GameRenderer {
      * Sets rectangle color and styling
      */
     private void setRectangleData(int color, Rectangle rectangle) {
-        rectangle.setFill(getFillColor(color));
+        rectangle.setFill(BrickColorManager.getColor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
-    }
-
-    /**
-     * Gets the fill color for a brick type
-     */
-    private Paint getFillColor(int i) {
-        Paint returnPaint;
-        switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
-        }
-        return returnPaint;
     }
 }
