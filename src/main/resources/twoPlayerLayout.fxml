@@ -1,17 +1,17 @@
-<?import com.comp2042.VictoryPanel?>
+<?import com.comp2042.ui.panels.VictoryPanel?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
-<Pane fx:id="rootPane" fx:controller="com.comp2042.TwoPlayerGuiController"
+<Pane fx:id="rootPane" fx:controller="com.comp2042.ui.controllers.TwoPlayerGuiController"
       xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
 
     <!-- Player 1 Section -->
     <GridPane fx:id="brickPanel1" vgap="1" hgap="1"/>
     <BorderPane styleClass="gameBoard" layoutX="20" layoutY="45" prefWidth="224" prefHeight="500">
         <center>
-            <GridPane fx:id="gamePanel1" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            <GridPane fx:id="gamePanel1" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
 
@@ -46,7 +46,7 @@
     <GridPane fx:id="brickPanel2" vgap="1" hgap="1"/>
     <BorderPane styleClass="gameBoard" layoutX="556" layoutY="45" prefWidth="224" prefHeight="500">
         <center>
-            <GridPane fx:id="gamePanel2" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            <GridPane fx:id="gamePanel2" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
 
