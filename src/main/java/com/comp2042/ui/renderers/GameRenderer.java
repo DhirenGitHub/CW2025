@@ -161,6 +161,7 @@ public class GameRenderer {
                 int offsetRow = (4 - brickHeight) / 2;
                 int offsetCol = (4 - brickWidth) / 2;
 
+
                 for (int i = 0; i < nextBrickData.length; i++) {
                     for (int j = 0; j < nextBrickData[i].length; j++) {
                         if (nextBrickData[i][j] != 0) {

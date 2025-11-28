@@ -8,32 +8,32 @@
       xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
 
     <!-- Player 1 Section -->
-    <GridPane fx:id="brickPanel1" vgap="1" hgap="1"/>
-    <BorderPane styleClass="gameBoard" layoutX="20" layoutY="45" prefWidth="224" prefHeight="500">
+    <BorderPane styleClass="gameBoard" layoutX="20" layoutY="45" prefWidth="224" prefHeight="500" viewOrder="1">
         <center>
             <GridPane fx:id="gamePanel1" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
+    <GridPane fx:id="brickPanel1" vgap="1" hgap="1" viewOrder="0"/>
 
-    <VBox layoutX="270" layoutY="45" spacing="10" alignment="TOP_CENTER" prefWidth="100">
+    <VBox styleClass="sidebarPanel" layoutX="270" layoutY="45" spacing="5" alignment="TOP_CENTER" prefWidth="100">
         <Label text="PLAYER 1" styleClass="playerLabel"/>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="SCORE" styleClass="statLabel"/>
             <Text fx:id="scoreText1" text="0" styleClass="scoreClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="LEVEL" styleClass="statLabel"/>
             <Text fx:id="levelText1" text="1" styleClass="levelClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="LINES" styleClass="statLabel"/>
             <Text fx:id="linesText1" text="0" styleClass="linesClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="NEXT" styleClass="statLabel"/>
             <GridPane fx:id="nextBrickPanel1" styleClass="nextBrick" hgap="1" vgap="1"/>
         </VBox>
@@ -43,32 +43,32 @@
     </VBox>
 
     <!-- Player 2 Section -->
-    <GridPane fx:id="brickPanel2" vgap="1" hgap="1"/>
-    <BorderPane styleClass="gameBoard" layoutX="556" layoutY="45" prefWidth="224" prefHeight="500">
+    <BorderPane styleClass="gameBoard" layoutX="556" layoutY="45" prefWidth="224" prefHeight="500" viewOrder="1">
         <center>
             <GridPane fx:id="gamePanel2" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
+    <GridPane fx:id="brickPanel2" vgap="1" hgap="1" viewOrder="0"/>
 
-    <VBox layoutX="420" layoutY="45" spacing="10" alignment="TOP_CENTER" prefWidth="100">
+    <VBox styleClass="sidebarPanel" layoutX="420" layoutY="45" spacing="5" alignment="TOP_CENTER" prefWidth="100">
         <Label text="PLAYER 2" styleClass="playerLabel"/>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="SCORE" styleClass="statLabel"/>
             <Text fx:id="scoreText2" text="0" styleClass="scoreClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="LEVEL" styleClass="statLabel"/>
             <Text fx:id="levelText2" text="1" styleClass="levelClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="LINES" styleClass="statLabel"/>
             <Text fx:id="linesText2" text="0" styleClass="linesClassSmall"/>
         </VBox>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
+        <VBox spacing="2" alignment="TOP_CENTER">
             <Label text="NEXT" styleClass="statLabel"/>
             <GridPane fx:id="nextBrickPanel2" styleClass="nextBrick" hgap="1" vgap="1"/>
         </VBox>

@@ -8,38 +8,38 @@
 <?import java.net.URL?>
 <Pane fx:id="rootPane" fx:controller="com.comp2042.ui.controllers.GuiController"
       xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="225" layoutY="45">
+    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="225" layoutY="45" viewOrder="1">
         <center>
             <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
+    <GridPane fx:id="brickPanel" vgap="1" hgap="1" viewOrder="0"/>
 
     <Group fx:id="groupNotification" layoutX="225" layoutY="45">
     </Group>
 
-    <VBox fx:id="sidebarContainer" layoutX="465" layoutY="75" spacing="15" alignment="TOP_CENTER" prefWidth="100">
-        <VBox fx:id="scoreContainer" spacing="5" alignment="TOP_CENTER">
+    <VBox fx:id="sidebarContainer" styleClass="sidebarPanel" layoutX="465" layoutY="75" spacing="8" alignment="TOP_CENTER" prefWidth="100">
+        <VBox fx:id="scoreContainer" spacing="2" alignment="TOP_CENTER">
             <Label text="SCORE" styleClass="nextBrickLabel"/>
             <Text fx:id="scoreText" text="0" styleClass="scoreClass"/>
         </VBox>
 
-        <VBox fx:id="highScoreContainer" spacing="5" alignment="TOP_CENTER">
+        <VBox fx:id="highScoreContainer" spacing="2" alignment="TOP_CENTER">
             <Label text="HIGHSCORE" styleClass="nextBrickLabel"/>
             <Text fx:id="highScoreText" text="0" styleClass="highScoreClass"/>
         </VBox>
 
-        <VBox fx:id="levelContainer" spacing="5" alignment="TOP_CENTER">
+        <VBox fx:id="levelContainer" spacing="2" alignment="TOP_CENTER">
             <Label text="LEVEL" styleClass="nextBrickLabel"/>
             <Text fx:id="levelText" text="1" styleClass="levelClass"/>
         </VBox>
 
-        <VBox fx:id="nextBrickContainer" spacing="5" alignment="TOP_CENTER">
+        <VBox fx:id="nextBrickContainer" spacing="2" alignment="TOP_CENTER">
             <Label text="NEXT" styleClass="nextBrickLabel"/>
             <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1" layoutX="40" layoutY="30"/>
         </VBox>
 
-        <VBox fx:id="linesClearedContainer" spacing="5" alignment="TOP_CENTER">
+        <VBox fx:id="linesClearedContainer" spacing="2" alignment="TOP_CENTER">
             <Label text="LINES" styleClass="nextBrickLabel"/>
             <Text fx:id="linesClearedText" text="0" styleClass="linesClearedClass"/>
         </VBox>

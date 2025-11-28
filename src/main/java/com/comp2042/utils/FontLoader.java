@@ -13,7 +13,7 @@ public class FontLoader {
     private static boolean fontLoaded = false;
     
     /**
-     * Loads the digital.ttf font and returns its family name
+     * Loads the arcade_classic.ttf font and returns its family name
      * @return The font family name, or null if loading failed
      */
     public static String loadFont() {
@@ -22,7 +22,7 @@ public class FontLoader {
         }
 
         // Try loading font using InputStream (more reliable)
-        try (java.io.InputStream fontStream = FontLoader.class.getClassLoader().getResourceAsStream("digital.ttf")) {
+        try (java.io.InputStream fontStream = FontLoader.class.getClassLoader().getResourceAsStream("arcade_classic.ttf")) {
             if (fontStream != null) {
                 Font loadedFont = Font.loadFont(fontStream, 12);
                 if (loadedFont != null) {
@@ -36,7 +36,7 @@ public class FontLoader {
                         System.err.println("Warning: Font loaded but not found in available families!");
                         System.err.println("Trying to find similar font names...");
                         for (String family : Font.getFamilies()) {
-                            if (family.toLowerCase().contains("digital")) {
+                            if (family.toLowerCase().contains("arcade")) {
                                 System.out.println("Found similar font: " + family);
                             }
                         }
@@ -46,7 +46,7 @@ public class FontLoader {
                     System.err.println("Failed to load font - Font.loadFont returned null");
                 }
             } else {
-                System.err.println("Font resource stream is null - digital.ttf not found");
+                System.err.println("Font resource stream is null - arcade_classic.ttf not found");
             }
         } catch (Exception e) {
             System.err.println("Exception loading font: " + e.getMessage());
@@ -55,7 +55,7 @@ public class FontLoader {
 
         // Fallback: Try URL method
         try {
-            URL fontUrl = FontLoader.class.getClassLoader().getResource("digital.ttf");
+            URL fontUrl = FontLoader.class.getClassLoader().getResource("arcade_classic.ttf");
             if (fontUrl != null) {
                 Font loadedFont = Font.loadFont(fontUrl.toExternalForm(), 12);
                 if (loadedFont != null) {
@@ -85,7 +85,7 @@ public class FontLoader {
         }
         // Try to find the font by checking available families
         for (String family : Font.getFamilies()) {
-            if (family.toLowerCase().contains("digital")) {
+            if (family.toLowerCase().contains("arcade")) {
                 fontFamilyName = family;
                 System.out.println("Found font by name matching: " + family);
                 return family;

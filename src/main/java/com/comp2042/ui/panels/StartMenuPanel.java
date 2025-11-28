@@ -1,19 +1,22 @@
 package com.comp2042.ui.panels;
 
-import com.comp2042.audio.AudioManager;
-import com.comp2042.utils.GameConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.comp2042.utils.GameConstants;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -46,27 +49,39 @@ public class StartMenuPanel extends StackPane {
         this.random = new Random();
         this.fallingPieces = new ArrayList<>();
 
-        // Create gradient background
+        // Create background with image
         backgroundPane = new Pane();
         backgroundPane.setPrefSize(800, 600);
 
-        // Navy to black gradient
-        Rectangle gradientRect = new Rectangle(800, 600);
-        LinearGradient gradient = new LinearGradient(
-            0, 0, 0, 1, true, null,
-            new Stop(0, Color.rgb(10, 20, 50)),
-            new Stop(1, Color.rgb(0, 0, 0))
-        );
-        gradientRect.setFill(gradient);
-        backgroundPane.getChildren().add(gradientRect);
+        // Set background image
+        try {
+            String imagePath = getClass().getResource("/home_bg.png").toExternalForm();
+            BackgroundImage bgImage = new BackgroundImage(
+                new javafx.scene.image.Image(imagePath),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(800, 600, false, false, false, false)
+            );
+            backgroundPane.setBackground(new Background(bgImage));
+        } catch (Exception e) {
+            System.err.println("Failed to load home background image: " + e.getMessage());
+            // Fallback to gradient if image fails to load
+            Rectangle gradientRect = new Rectangle(800, 600);
+            LinearGradient gradient = new LinearGradient(
+                0, 0, 0, 1, true, null,
+                new Stop(0, Color.rgb(10, 20, 50)),
+                new Stop(1, Color.rgb(0, 0, 0))
+            );
+            gradientRect.setFill(gradient);
+            backgroundPane.getChildren().add(gradientRect);
+        }
 
         // Create menu content
         VBox menuBox = new VBox(20);
-        menuBox.setAlignment(Pos.CENTER);
+        menuBox.setAlignment(Pos.BOTTOM_CENTER);
         menuBox.setMaxSize(800, 600);
-
-        final Label titleLabel = new Label("TETRIS");
-        titleLabel.getStyleClass().add("startMenuStyle");
+        menuBox.setTranslateY(-75); // Move menu up from bottom to leave space
 
         playButton = new Button("1 PLAYER");
         playButton.getStyleClass().add("ipad-dark-grey");
@@ -84,7 +99,7 @@ public class StartMenuPanel extends StackPane {
         quitButton.getStyleClass().add("ipad-dark-grey");
         quitButton.setPrefWidth(200);
 
-        menuBox.getChildren().addAll(titleLabel, playButton, twoPlayerButton, controlsButton, quitButton);
+        menuBox.getChildren().addAll(playButton, twoPlayerButton, controlsButton, quitButton);
 
         // Stack background behind menu
         this.getChildren().addAll(backgroundPane, menuBox);

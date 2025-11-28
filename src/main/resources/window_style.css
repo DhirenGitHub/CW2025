@@ -1,50 +1,88 @@
 .root {
-    -fx-background-image: url("background_image.png");
+    -fx-background-image: url("gameplay_bg.png");
 }
 
 .nextBrick {
-    -fx-border-width: 2px;
-    -fx-border-color: whitesmoke;
-    -fx-border-radius: 17px;
+    -fx-border-width: 0;
 }
 
 .gameBoard {
-    -fx-border-color: linear-gradient(#2A5058, #61a2b1);
-    -fx-border-width: 12px;
-    -fx-border-radius: 12px;
+    -fx-background-color: #2a2416;
+    -fx-border-color: #F4E4C1, #D4A574, #8B6914, #5C4A2A;
+    -fx-border-width: 3px, 2px, 3px, 2px;
+    -fx-border-style: solid;
+    -fx-border-insets: 0, 3, 5, 7;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.5), 8, 0, 4, 4);
+}
+
+.sidebarPanel {
+    -fx-background-color: #2a2416;
+    -fx-border-color: #F4E4C1, #D4A574, #8B6914, #5C4A2A;
+    -fx-border-width: 3px, 2px, 3px, 2px;
+    -fx-border-style: solid;
+    -fx-border-insets: 0, 3, 5, 7;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.5), 8, 0, 4, 4);
+}
+
+.controlsContainer {
+    -fx-background-color: #2a2416;
+    -fx-border-color: #F4E4C1, #D4A574, #8B6914, #5C4A2A;
+    -fx-border-width: 3px, 2px, 3px, 2px;
+    -fx-border-style: solid;
+    -fx-border-insets: 0, 3, 5, 7;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.5), 8, 0, 4, 4);
 }
 
 .nextBrickLabel {
-    -fx-font-family: "Let's go Digital";
-    -fx-padding: 20px 0 0 0;
+    -fx-font-family: "ArcadeClassic";
+    -fx-padding: 0;
     -fx-font-size: 16px;
     -fx-text-fill: white;
 }
 
 .ipad-dark-grey {
-    -fx-background-color: #000000;
+    -fx-background-color: #81b4b1;
     -fx-border-color: #ffffff;
-    -fx-border-width: 3px;
+    -fx-border-width: 4px;
     -fx-border-radius: 0;
     -fx-background-radius: 0;
     -fx-padding: 10 20 10 20;
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #314644;
     -fx-cursor: hand;
+    -fx-shape: "M 6,0 L 194,0 L 194,2 L 198,2 L 198,6 L 200,6 L 200,44 L 198,44 L 198,48 L 194,48 L 194,50 L 6,50 L 6,48 L 2,48 L 2,44 L 0,44 L 0,6 L 2,6 L 2,2 L 6,2 Z";
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-effect:
+        innershadow(one-pass-box, #628885, 0, 1.0, -6, -6),
+        innershadow(one-pass-box, #bae7e4, 0, 1.0, 6, 6),
+        dropshadow(one-pass-box, #000000, 0, 1.0, 6, 6);
 }
 
 .ipad-dark-grey:hover {
-    -fx-background-color: #222222;
-    -fx-border-color: #aaaaaa;
-    -fx-text-fill: #aaaaaa;
+    -fx-background-color: #9ec9c6;
+    -fx-text-fill: #5c837f;
+    -fx-border-color: #ffffff;
+    -fx-effect:
+        innershadow(one-pass-box, #7c9c9a, 0, 1.0, -6, -6),
+        innershadow(one-pass-box, #bbe6e3, 0, 1.0, 6, 6),
+        dropshadow(one-pass-box, #000000, 0, 1.0, 6, 6);
 }
 
 .ipad-dark-grey:pressed {
-    -fx-background-color: #444444;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: #9ec9c6;
+    -fx-text-fill: #5c837f;
     -fx-border-color: #ffffff;
+    -fx-translate-x: 4;
+    -fx-translate-y: 4;
+    -fx-effect:
+        innershadow(one-pass-box, #7c9c9a, 0, 1.0, -6, -6),
+        innershadow(one-pass-box, #bbe6e3, 0, 1.0, 6, 6),
+        dropshadow(one-pass-box, #000000, 0, 1.0, 2, 2);
 }
 
 .rectangleStyle {
@@ -63,63 +101,63 @@
 }
 
 .bonusStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 48px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
 
 .gameOverStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 48;
     -fx-fill: red;
     -fx-text-fill: red;
 }
 
 .newHighScoreStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 32;
     -fx-fill: cyan;
     -fx-text-fill: cyan;
 }
 
 .startMenuStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 48;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 .scoreClass{
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 38;
     -fx-fill: white;
     -fx-text-fill: white;
 }
 
 .highScoreClass{
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 28;
     -fx-fill: cyan;
     -fx-text-fill: cyan;
 }
 
 .levelClass{
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 28;
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
 
 .linesClearedClass{
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 28;
     -fx-fill: lime;
     -fx-text-fill: lime;
 }
 
 .pauseStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 48;
     -fx-fill: white;
     -fx-text-fill: white;
@@ -130,47 +168,47 @@
 }
 
 .victoryStyle {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 56;
     -fx-fill: gold;
     -fx-text-fill: gold;
 }
 
 .playerLabel {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 20;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 .statLabel {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 14;
     -fx-text-fill: white;
 }
 
 .controlsLabel {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 10;
     -fx-text-fill: #aaaaaa;
 }
 
 .scoreClassSmall {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 24;
     -fx-fill: white;
     -fx-text-fill: white;
 }
 
 .levelClassSmall {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 24;
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
 
 .linesClassSmall {
-    -fx-font-family: "Let's go Digital";
+    -fx-font-family: "ArcadeClassic";
     -fx-font-size: 24;
     -fx-fill: lime;
     -fx-text-fill: lime;

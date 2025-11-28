@@ -22,15 +22,23 @@ public class ControlsPanel extends StackPane {
 
     public ControlsPanel() {
         this.setPrefSize(800, 600);
+        this.setAlignment(Pos.CENTER);
 
-        // Semi-transparent dark background
-        Rectangle background = new Rectangle(800, 600);
-        background.setFill(Color.rgb(0, 0, 0, 0.9));
+        // Main layout container
+        VBox mainLayout = new VBox(15);
+        mainLayout.setAlignment(Pos.CENTER);
+
+        // Create styled container with desert theme
+        VBox containerBox = new VBox(15);
+        containerBox.setAlignment(Pos.CENTER);
+        containerBox.setPadding(new Insets(20));
+        containerBox.setPrefWidth(550);
+        containerBox.setMaxWidth(550);
+        containerBox.getStyleClass().add("controlsContainer");
 
         // Create content container
-        VBox contentBox = new VBox(25);
+        VBox contentBox = new VBox(15);
         contentBox.setAlignment(Pos.CENTER);
-        contentBox.setPadding(new Insets(40));
 
         // Load digital font
         FontLoader.loadFont();
@@ -100,11 +108,12 @@ public class ControlsPanel extends StackPane {
             onePlayerTitle,
             onePlayerControls,
             twoPlayerTitle,
-            twoPlayerControls,
-            backButton
+            twoPlayerControls
         );
 
-        this.getChildren().addAll(background, contentBox);
+        containerBox.getChildren().add(contentBox);
+        mainLayout.getChildren().addAll(containerBox, backButton);
+        this.getChildren().add(mainLayout);
     }
 
     public Button getBackButton() {
