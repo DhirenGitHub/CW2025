@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
@@ -247,7 +248,12 @@ public class TwoPlayerGuiController implements Initializable {
                 return;
             }
 
-            refreshGameBackground(player);
+            // Animate row clear if rows were removed
+            if (clearRow.getLinesRemoved() > 0) {
+                animateAndRefreshBackground(player, clearRow);
+            } else {
+                refreshGameBackground(player);
+            }
         } else {
             if (event.getEventSource() == EventSource.USER) {
                 board.getScore().add(1);
@@ -263,6 +269,17 @@ public class TwoPlayerGuiController implements Initializable {
         }
 
         Board board = getPlayerState(player).getBoard();
+        ViewData currentBrick = board.getViewData();
+
+        // Animate hard drop if there's a distance to fall
+        if (currentBrick != null) {
+            int startY = currentBrick.getyPosition();
+            int endY = currentBrick.getGhostYPosition();
+            if (endY > startY) {
+                animateHardDrop(player, startY, endY);
+            }
+        }
+
         board.hardDrop();
         ClearRow clearRow = board.landBrickAndClearRows();
         if (clearRow.getLinesRemoved() > 0) {
@@ -274,9 +291,38 @@ public class TwoPlayerGuiController implements Initializable {
             return;
         }
 
-        refreshGameBackground(player);
+        // Animate row clear if rows were removed
+        if (clearRow.getLinesRemoved() > 0) {
+            animateAndRefreshBackground(player, clearRow);
+        } else {
+            refreshGameBackground(player);
+        }
+
         refreshBrick(player);
         rootPane.requestFocus();
+    }
+
+    /**
+     * Animates the brick falling during a hard drop for a specific player
+     */
+    private void animateHardDrop(int player, int startY, int endY) {
+        GridPane brickPanel = (player == 1) ? brickPanel1 : brickPanel2;
+
+        // Get the brick size from the actual rectangle
+        double brickSize = 30; // Default brick size
+        if (brickPanel.getChildren().size() > 0 && brickPanel.getChildren().get(0) instanceof Rectangle) {
+            Rectangle rect = (Rectangle) brickPanel.getChildren().get(0);
+            brickSize = rect.getHeight();
+        }
+
+        double cellHeight = brickPanel.getVgap() + brickSize;
+        double distance = (endY - startY) * cellHeight;
+
+        // Create a quick drop animation (faster than normal fall)
+        TranslateTransition transition = new TranslateTransition(Duration.millis(100), brickPanel);
+        transition.setByY(distance);
+        transition.setOnFinished(e -> brickPanel.setTranslateY(0)); // Reset translation after animation
+        transition.play();
     }
 
     private void refreshBrick(int player) {
@@ -296,6 +342,18 @@ public class TwoPlayerGuiController implements Initializable {
         PlayerGameState playerState = getPlayerState(player);
         renderer.refreshGameBackground(playerState.getDisplayMatrix(),
                                       playerState.getBoard().getBoardMatrix());
+    }
+
+    /**
+     * Animates row clearing and then refreshes the background for a specific player
+     */
+    private void animateAndRefreshBackground(int player, ClearRow clearRow) {
+        PlayerGameState playerState = getPlayerState(player);
+        renderer.animateRowClear(player, playerState.getDisplayMatrix(),
+                                clearRow.getClearedRowIndices(), () -> {
+            renderer.refreshGameBackground(playerState.getDisplayMatrix(),
+                                          playerState.getBoard().getBoardMatrix());
+        });
     }
 
     private void bindScore(int player, Score score) {

@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import com.comp2042.game.models.ViewData;
 
 public class GuiController implements Initializable {
 
@@ -221,6 +223,15 @@ public class GuiController implements Initializable {
         gameRenderer.refreshGameBackground(board);
     }
 
+    /**
+     * Animates row clearing and then refreshes the background
+     */
+    public void animateAndRefreshBackground(ClearRow clearRow, int[][] board) {
+        gameRenderer.animateRowClear(clearRow.getClearedRowIndices(), () -> {
+            gameRenderer.refreshGameBackground(board);
+        });
+    }
+
     public void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
@@ -234,6 +245,19 @@ public class GuiController implements Initializable {
 
     public void hardDrop() {
         if (isPause.getValue() == Boolean.FALSE) {
+            // Get current brick position before hard drop
+            ViewData currentBrick = gameRenderer.getCurrentBrickData();
+            if (currentBrick != null) {
+                int startY = currentBrick.getyPosition();
+                int endY = currentBrick.getGhostYPosition();
+
+                // Only animate if there's a distance to fall
+                if (endY > startY) {
+                    animateHardDrop(startY, endY);
+                }
+            }
+
+            // Execute the hard drop logic
             DownData downData = eventListener.onHardDropEvent();
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
                 showScoreNotification(downData.getClearRow().getScoreBonus());
@@ -241,6 +265,27 @@ public class GuiController implements Initializable {
             refreshBrick(downData.getViewData());
             gamePanel.requestFocus();
         }
+    }
+
+    /**
+     * Animates the brick falling during a hard drop
+     */
+    private void animateHardDrop(int startY, int endY) {
+        // Get the brick size from the actual rectangle
+        double brickSize = 30; // Default brick size
+        if (brickPanel.getChildren().size() > 0 && brickPanel.getChildren().get(0) instanceof javafx.scene.shape.Rectangle) {
+            javafx.scene.shape.Rectangle rect = (javafx.scene.shape.Rectangle) brickPanel.getChildren().get(0);
+            brickSize = rect.getHeight();
+        }
+
+        double cellHeight = brickPanel.getVgap() + brickSize;
+        double distance = (endY - startY) * cellHeight;
+
+        // Create a quick drop animation (faster than normal fall)
+        TranslateTransition transition = new TranslateTransition(Duration.millis(100), brickPanel);
+        transition.setByY(distance);
+        transition.setOnFinished(e -> brickPanel.setTranslateY(0)); // Reset translation after animation
+        transition.play();
     }
 
     private void showScoreNotification(int scoreBonus) {

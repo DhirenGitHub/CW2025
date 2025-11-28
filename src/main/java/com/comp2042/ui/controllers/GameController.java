@@ -33,7 +33,12 @@ public class GameController implements InputEventListener {
                 viewGuiController.gameOver(board.getScore().scoreProperty().get());
             }
 
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            // Animate row clear if rows were removed
+            if (clearRow != null && clearRow.getLinesRemoved() > 0) {
+                viewGuiController.animateAndRefreshBackground(clearRow, board.getBoardMatrix());
+            } else {
+                viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            }
 
         } else {
             if (event.getEventSource() == EventSource.USER) {
@@ -70,7 +75,14 @@ public class GameController implements InputEventListener {
         if (board.createNewBrick()) {
             viewGuiController.gameOver(board.getScore().scoreProperty().get());
         }
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        // Animate row clear if rows were removed
+        if (clearRow != null && clearRow.getLinesRemoved() > 0) {
+            viewGuiController.animateAndRefreshBackground(clearRow, board.getBoardMatrix());
+        } else {
+            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        }
+
         return new DownData(clearRow, board.getViewData());
     }
 

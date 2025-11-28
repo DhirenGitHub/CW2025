@@ -85,6 +85,28 @@ public class SimpleBoard implements Board {
             return true;
         }
 
+        // Wall kick: Try shifting down (for pieces that overflow at top)
+        Point downKick = new Point(currentOffset);
+        downKick.translate(0, 1);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) downKick.getX(), (int) downKick.getY());
+        if (!conflict) {
+            currentOffset = downKick;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Wall kick: Try shifting down 2 units (for I-piece at top)
+        Point downKick2 = new Point(currentOffset);
+        downKick2.translate(0, 2);
+        conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(),
+                                             (int) downKick2.getX(), (int) downKick2.getY());
+        if (!conflict) {
+            currentOffset = downKick2;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
         // Wall kick: Try shifting left
         Point leftKick = new Point(currentOffset);
         leftKick.translate(-1, 0);

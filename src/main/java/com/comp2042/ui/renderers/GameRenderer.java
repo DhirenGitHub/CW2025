@@ -4,11 +4,17 @@ import com.comp2042.game.models.ViewData;
 import com.comp2042.utils.BrickColorManager;
 import com.comp2042.utils.GameConstants;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.SequentialTransition;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
+import java.util.List;
 
 /**
  * Handles all rendering operations for the game including bricks, boards, and ghost pieces.
@@ -25,12 +31,20 @@ public class GameRenderer {
     private Rectangle[][] nextBrickRectangles;
     private GridPane ghostBrickPanel;
     private Rectangle[][] ghostRectangles;
+    private ViewData currentBrickData;
 
     public GameRenderer(GridPane gamePanel, GridPane brickPanel, GridPane nextBrickPanel, Pane rootPane) {
         this.gamePanel = gamePanel;
         this.brickPanel = brickPanel;
         this.nextBrickPanel = nextBrickPanel;
         this.rootPane = rootPane;
+    }
+
+    /**
+     * Gets the current brick data (for animations)
+     */
+    public ViewData getCurrentBrickData() {
+        return currentBrickData;
     }
 
     /**
@@ -132,6 +146,7 @@ public class GameRenderer {
                 nextBrickRectangles[i][j].setFill(Color.TRANSPARENT);
                 nextBrickRectangles[i][j].setArcHeight(0);
                 nextBrickRectangles[i][j].setArcWidth(0);
+                nextBrickRectangles[i][j].setStroke(null);
             }
         }
 
@@ -173,6 +188,10 @@ public class GameRenderer {
                                 rect.setFill(BrickColorManager.getColor(nextBrickData[i][j]));
                                 rect.setArcHeight(9);
                                 rect.setArcWidth(9);
+                                // Add retro shadow effect to next brick preview
+                                rect.setStroke(BrickColorManager.getShadowColor(nextBrickData[i][j]));
+                                rect.setStrokeWidth(2);
+                                rect.setStrokeType(StrokeType.INSIDE);
                             }
                         }
                     }
@@ -185,6 +204,8 @@ public class GameRenderer {
      * Refreshes the brick display with new position and data
      */
     public void refreshBrick(ViewData brick) {
+        // Store current brick data for animations
+        this.currentBrickData = brick;
         // Calculate cell dimensions (brick size + gap)
         double cellWidth = brickPanel.getHgap() + GameConstants.BRICK_SIZE;
         double cellHeight = brickPanel.getVgap() + GameConstants.BRICK_SIZE;
@@ -217,19 +238,19 @@ public class GameRenderer {
         ghostBrickPanel.setLayoutX(brickPanel.getLayoutX());
         ghostBrickPanel.setLayoutY(brickPanel.getLayoutY() + (brick.getGhostYPosition() - brick.getyPosition()) * cellHeight);
 
-        // Update ghost brick appearance - semi-transparent version of the brick
+        // Update ghost brick appearance - outline only for ghost effect
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 if (brick.getBrickData()[i][j] != 0) {
                     Paint color = BrickColorManager.getColor(brick.getBrickData()[i][j]);
-                    // Make it semi-transparent
+                    // Show only outline with no fill for ghost effect
+                    ghostRectangles[i][j].setFill(Color.TRANSPARENT);
                     if (color instanceof Color solidColor) {
-                        Color ghostColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.3);
-                        ghostRectangles[i][j].setFill(ghostColor);
-                        ghostRectangles[i][j].setStroke(solidColor.deriveColor(0, 1, 1, 0.5));
-                        ghostRectangles[i][j].setStrokeWidth(1);
-                    } else {
-                        ghostRectangles[i][j].setFill(Color.TRANSPARENT);
+                        // Use a semi-transparent version of the brick color for the outline
+                        Color outlineColor = new Color(solidColor.getRed(), solidColor.getGreen(), solidColor.getBlue(), 0.6);
+                        ghostRectangles[i][j].setStroke(outlineColor);
+                        ghostRectangles[i][j].setStrokeWidth(2);
+                        ghostRectangles[i][j].setStrokeType(StrokeType.INSIDE);
                     }
                 } else {
                     ghostRectangles[i][j].setFill(Color.TRANSPARENT);
@@ -251,11 +272,71 @@ public class GameRenderer {
     }
 
     /**
-     * Sets rectangle color and styling
+     * Animates row clearing with a flash effect
+     */
+    public void animateRowClear(List<Integer> rowIndices, Runnable onFinished) {
+        if (rowIndices == null || rowIndices.isEmpty()) {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            return;
+        }
+
+        ParallelTransition flashAnimation = new ParallelTransition();
+
+        // Flash each cleared row white
+        for (int rowIndex : rowIndices) {
+            // Adjust for hidden rows (rows 0-1 are hidden)
+            if (rowIndex >= 2 && rowIndex < displayMatrix.length) {
+                for (int col = 0; col < displayMatrix[rowIndex].length; col++) {
+                    Rectangle rect = displayMatrix[rowIndex][col];
+                    Paint originalColor = rect.getFill();
+
+                    // Create flash animation: white -> original -> white -> fade out
+                    SequentialTransition rowAnimation = new SequentialTransition();
+
+                    // Flash to white
+                    FadeTransition flash1 = new FadeTransition(Duration.millis(80), rect);
+                    flash1.setOnFinished(e -> rect.setFill(Color.WHITE));
+
+                    // Flash back
+                    FadeTransition flash2 = new FadeTransition(Duration.millis(80), rect);
+                    flash2.setOnFinished(e -> rect.setFill(originalColor));
+
+                    // Flash to white again
+                    FadeTransition flash3 = new FadeTransition(Duration.millis(80), rect);
+                    flash3.setOnFinished(e -> rect.setFill(Color.WHITE));
+
+                    rowAnimation.getChildren().addAll(flash1, flash2, flash3);
+                    flashAnimation.getChildren().add(rowAnimation);
+                }
+            }
+        }
+
+        flashAnimation.setOnFinished(e -> {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+        });
+
+        flashAnimation.play();
+    }
+
+    /**
+     * Sets rectangle color and styling with retro shadow effect
      */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(BrickColorManager.getColor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
+
+        // Add retro-style shadow border (darker outline)
+        if (color != 0) {
+            rectangle.setStroke(BrickColorManager.getShadowColor(color));
+            rectangle.setStrokeWidth(2);
+            rectangle.setStrokeType(StrokeType.INSIDE);
+        } else {
+            rectangle.setStroke(null);
+        }
     }
 }
